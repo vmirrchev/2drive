@@ -1,0 +1,65 @@
+#hero {
+    background-color: #eee;
+    text-align: center;
+}
+
+#features,
+#categories {
+    display: flex;
+    background: lightgray;
+}
+
+#features ul,
+#categories ul {
+    list-style: none;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+#features ul li,
+#categories ul li {
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+#categories ul li a {
+    color: white;
+}
+
+#features .features-image-container, #categories .categories-image-container {
+    flex: 65%;
+}
+
+#features .features-info-container, #categories .categories-info-container {
+    flex: 35%;
+    padding-left: 5em;
+}
+
+#features .features-image-container img, #categories .categories-image-container img {
+    width: 100%;
+    object-fit: cover;
+}
+
+#find-car {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#find-car div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 1em;
+    border: 2px solid grey;
+    max-width: 400px;
+}
+
+#find-car img {
+    width: 100%;
+    object-fit: cover;
+}
+
+#find-car a {
+    color: red;
+    margin: 1em;
+}

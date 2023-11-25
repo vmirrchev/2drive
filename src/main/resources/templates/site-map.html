@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/commons::head}"></head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>Site map</h2>
+        </section>
+
+        <section>
+            <h2>Main Sections</h2>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about-us">About Us</a></li>
+                <li><a href="/offers">Offers</a></li>
+                <li><a href="/add-offer">Add offer</a></li>
+                <li><a href="/contact-us">Contact Us</a></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>User Sections</h2>
+            <ul>
+                <li><a href="/login">Sign in</a></li>
+                <li><a href="/register">Sign up</a></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Information</h2>
+            <ul>
+                <li><a href="/privacy-policy">Privacy policy</a></li>
+                <li><a href="/terms-and-conditions">Terms and conditions</a></li>
+            </ul>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/commons::head}"></head>
+
+<body>
+<header th:replace="~{fragments/commons::header}"></header>
+<main>
+    <section id="title">
+        <h2>Add engine</h2>
+    </section>
+
+    <section id="add-engine">
+        <!-- New engine form goes here -->
+        <form action="engine.php" method="post">
+            <!-- Include input fields for engine information -->
+            <select>
+                <option value="" disabled selected>Select manufacturer</option>
+                <option value="">Mercedes</option>
+                <option value="">Volkswagen</option>
+                <option value="">Alfa romeo</option>
+                <option value="">Fiat</option>
+                <option value="">Audi</option>
+                <option value="">BMW</option>
+                <option value="">Volvo</option>
+                <option value="">Toyota</option>
+                <option value="">Mazda</option>
+            </select>
+            <select>
+                <option value="" disabled selected>Select fuel type</option>
+                <option value="">PETROL</option>
+                <option value="">DIESEL</option>
+                <option value="">HYBRID</option>
+                <option value="">EV</option>
+            </select>
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="horsepower" placeholder="Horsepower" required>
+            <input type="text" name="displacement" placeholder="Displacement" required>
+            <button type="submit">Add engine</button>
+        </form>
+    </section>
+</main>
+<footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

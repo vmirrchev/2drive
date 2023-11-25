@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/commons::head}"></head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>About us</h2>
+        </section>
+
+        <section id="overview">
+            <h2>Company Overview</h2>
+            <p>Welcome to <span class="red-two">2</span>drive, where passion meets innovation. Since our inception in 2008, we have been committed to delivering excellence in every aspect of our business.</p>
+            <p>Driven by a team of dedicated professionals, we aim to redefine industry standards and create lasting impressions.</p>
+        </section>
+
+        <section id="mission">
+            <h2>Our Mission</h2>
+            <p>At <span class="red-two">2</span>drive, our mission is to deliver exceptional products and services that not only meet but exceed the expectations of our customers. We strive to become the largest automotive eCommerce website by 2025.</p>
+            <p>Our commitment to the customer's satisfaction sets us apart.</p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>We would love to hear from you. If you have any questions, feedback, or inquiries, feel free to reach out to us.</p>
+            <p>Email: info@yourcompany.com</p>
+            <p>Phone: (123) 456-7890</p>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/commons::head}"></head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>Register</h2>
+        </section>
+
+        <section id="register">
+            <!-- Your registration form goes here -->
+            <form action="register.php" method="post">
+                <!-- Include input fields for registration information -->
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="text" name="firstName" placeholder="First name" required>
+                <input type="text" name="lastName" placeholder="Last name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="text" name="phoneNumber" placeholder="Phone number" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="confirmPassword" placeholder="Confirm password" required>
+                <button type="submit">Register</button>
+            </form>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

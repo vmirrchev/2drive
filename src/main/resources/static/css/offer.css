@@ -1,0 +1,21 @@
+.offer {
+    border: 2px solid grey;
+    display: flex;
+    max-height: 800px;
+    max-width: 1600px;
+    margin: 0px auto 10px auto
+}
+
+.offer div {
+    flex: 50%;
+}
+
+.offer div img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.offer .offer-details {
+    padding: 1em;
+}

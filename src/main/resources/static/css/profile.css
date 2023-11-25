@@ -1,0 +1,8 @@
+.profile-image {
+    background: lightgrey;
+    padding: 1em;
+}
+
+.profile-image img {
+    width: 50px;
+}

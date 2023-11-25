@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert="~{fragments/commons::head}"></th:block>
+    <link rel="stylesheet" href="/css/add-model.css"/>
+</head>
+
+<body>
+<header th:replace="~{fragments/commons::header}"></header>
+<main>
+    <section id="title">
+        <h2>Add model</h2>
+    </section>
+
+    <section id="add-model">
+        <!-- New model form goes here -->
+        <form action="model.php" method="post">
+            <!-- Include input fields for model information -->
+            <!-- dropdown with brands -->
+            <select>
+                <option value="" disabled selected>Select brand</option>
+                <option value="">Mercedes</option>
+                <option value="">Volkswagen</option>
+                <option value="">Alfa romeo</option>
+                <option value="">Fiat</option>
+                <option value="">Audi</option>
+                <option value="">BMW</option>
+                <option value="">Volvo</option>
+                <option value="">Toyota</option>
+                <option value="">Mazda</option>
+            </select>
+            <!-- dropdowns with engines for the brand -->
+            <select>
+                <option value="" disabled selected>Select engine</option>
+                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
+                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
+                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            </select>
+            <select>
+                <option value="" disabled selected>Select engine</option>
+                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
+                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
+                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            </select>
+            <select>
+                <option value="" disabled selected>Select engine</option>
+                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
+                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
+                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            </select>
+            <select>
+                <option value="" disabled selected>Select engine</option>
+                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
+                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
+                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            </select>
+            <select>
+                <option value="" disabled selected>Select engine</option>
+                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
+                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
+                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            </select>
+            <div class="body-type-container">
+                <div class="container-title">
+                    <p>Body type</p>
+                </div>
+                <div class="body-types">
+                    <div class="body-type>">
+                        <label for="hatchback">HATCHBACK</label>
+                        <input type="checkbox" name="hatchback" id="hatchback" required>
+                    </div>
+                    <div class="body-type>">
+                        <label for="wagon">WAGON</label>
+                        <input type="checkbox" name="wagon" id="wagon" required>
+                    </div>
+                    <div class="body-type>">
+                        <label for="saloon">SALOON</label>
+                        <input type="checkbox" name="saloon" id="saloon" required>
+                    </div>
+                </div>
+            </div>
+            <!-- Include checkbox fields for model drive types -->
+            <div class="drive-type-container">
+                <div class="container-title">
+                    <p>Drive</p>
+                </div>
+                <div class="drive-types">
+                    <label for="fwd">FWR</label>
+                    <input type="checkbox" name="fwd" id="fwd" required>
+                    <label for="rwd">RWD</label>
+                    <input type="checkbox" name="rwd" id="rwd" required>
+                    <label for="awd">AWD</label>
+                    <input type="checkbox" name="awd" id="awd" required>
+                </div>
+            </div>
+            <!-- Include checkbox fields for model transmission types -->
+            <div class="transmission-type-container">
+                <div class="container-title">
+                    <p>Transmission</p>
+                </div>
+                <div class="transmission-types">
+                    <label for="manual">MANUAL</label>
+                    <input type="checkbox" name="manual" id="manual" required>
+                    <label for="auto">AUTOMATIC</label>
+                    <input type="checkbox" name="auto" id="auto" required>
+                </div>
+            </div>
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="startYear" placeholder="Start year" required>
+            <input type="text" name="endYear" placeholder="End year" required>
+            <button type="submit">Add engine</button>
+        </form>
+    </section>
+</main>
+<footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

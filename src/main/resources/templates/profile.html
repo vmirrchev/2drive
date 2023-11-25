@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert="~{fragments/commons::head}"></th:block>
+    <link rel="stylesheet" href="/css/profile.css"/>
+</head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>Profile</h2>
+        </section>
+
+        <section id="profile">
+            <div class="profile-image">
+                <img th:src="@{/img/user.png}"/>
+            </div>
+            <div class="profile-details">
+                <h2>Profile details</h2>
+                <ul>
+                    <li>First name: John</li>
+                    <li>Last name: Doe</li>
+                    <li>Email: john-doe@yahoo.com</li>
+                    <li>Phone number: 0888204060</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

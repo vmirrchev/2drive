@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xml:lang="en">
+
+<head>
+    <th:block th:insert="~{fragments/commons::head}"></th:block>
+    <link rel="stylesheet" href="/css/add-offer.css"/>
+</head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>Add offer</h2>
+        </section>
+
+        <section id="add-offer">
+            <!-- New offer form goes here -->
+            <form action="offer.php" method="post">
+                <!-- Include input fields for offer information -->
+                <!-- dropdown with brand -->
+                <select>
+                    <option value="" disabled selected>Select brand</option>
+                    <option value="">BMW</option>
+                </select>
+                <!-- dropdown with model -->
+                <select>
+                    <option value="" disabled selected>Select car model</option>
+                    <option value="">3 Series (2004-2009)</option>
+                    <option value="">3 Series (2010-2015)</option>
+                    <option value="">5 Series (2004-2009)</option>
+                    <option value="">7 Series (2004-2009)</option>
+                </select>
+                <!-- dropdown with engines for the model -->
+                <select>
+                    <option value="" disabled selected>Select car engine</option>
+                    <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
+                    <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
+                    <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+                </select>
+                <!-- dropdown with transmission for the model -->
+                <select>
+                    <option value="" disabled selected>Select transmission type</option>
+                    <option value="">MANUAL</option>
+                    <option value="">AUTO</option>
+                </select>
+                <!-- dropdown with drive type for the model -->
+                <select>
+                    <option value="" disabled selected>Select drive type</option>
+                    <option value="">RWD</option>
+                    <option value="">AWD</option>
+                </select>
+                <input type="text" name="title" placeholder="Title" required>
+                <input type="text" name="price" placeholder="Price" required>
+                <input type="text" name="odometer" placeholder="Odometer" required>
+                <input type="text" name="year" placeholder="Year" required>
+                <input type="text" name="color" placeholder="Color" required>
+                <textarea rows="8" cols="120" name="desc" placeholder="Description" required></textarea>
+                <div class="features-container">
+                    <label for="hasServiceBook">Service book</label>
+                    <input type="checkbox" name="hasServiceBook" id="hasServiceBook" required>
+                    <label for="hasAccidentDamage">Accident damage</label>
+                    <input type="checkbox" name="hasAccidentDamage" id="hasAccidentDamage" required>
+                </div>
+                <div class="picture-container">
+                    <label for="picture">Picture</label>
+                    <input type="file" id="picture" name="picture" accept="jpg, png" />
+                </div>
+                <button type="submit">Add offer</button>
+            </form>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

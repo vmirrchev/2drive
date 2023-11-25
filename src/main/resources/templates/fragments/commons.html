@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>2drive</title>
+    <link rel="stylesheet" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <link rel="stylesheet" href="/css/footer.css"/>
+</head>
+
+<body>
+    <header>
+        <div>
+            <a th:href="@{/}">Home</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/offers}">Offers</a></li>
+                <li><a th:href="@{/add-offer}">Add offer</a></li>
+                <li><a th:href="@{/my-offers}">My offers</a></li>
+                <li><a th:href="@{/add-engine}">Add engine</a></li>
+                <li><a th:href="@{/add-model}">Add model</a></li>
+                <li><a th:href="@{/login}">Login</a></li>
+                <li><a th:href="@{/register}">Register</a></li>
+                <li><a th:href="@{/profile}">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+    <footer>
+        <p>&copy; 2023 2drive. All rights reserved.</p>
+        <nav>
+            <ul>
+                <li><a th:href="@{/privacy-policy}">Privacy Policy</a></li>
+                <li><a th:href="@{/terms-and-conditions}">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,6 @@
+.features-container,
+.picture-container {
+    margin-bottom: 10px;
+    border: 1px solid black;
+    padding: 8px;
+}

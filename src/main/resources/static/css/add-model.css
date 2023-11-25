@@ -1,0 +1,7 @@
+.drive-type-container,
+.transmission-type-container,
+.body-type-container {
+    margin-bottom: 10px;
+    border: 1px solid black;
+    padding: 8px;
+}
