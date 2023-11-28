@@ -1,76 +1,99 @@
 package softuni.exam.drive.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.ModelAndView;
+import softuni.exam.drive.model.dto.EngineBindingModel;
+import softuni.exam.drive.model.enums.FuelType;
+import softuni.exam.drive.service.BrandService;
 
 /**
  * Controller responsible for rendering the views
  * @author Vasil Mirchev
  */
 @Controller
+@RequiredArgsConstructor
 public class ViewController {
 
-    @GetMapping("/")
-    public ModelAndView getIndex() { return new ModelAndView("index"); }
+    private final BrandService brandService;
 
-    @GetMapping("/register")
-    public ModelAndView getRegister() {
-        return new ModelAndView("register");
+    @GetMapping("/")
+    public String getIndex(final Model model) {
+        return "index";
     }
 
+    @GetMapping("/register")
+    public String getRegister(final Model model) {return "register";}
+
     @GetMapping("/login")
-    public ModelAndView getLogin() {
-        return new ModelAndView("login");
+    public String getLogin(final Model model) {
+        return "login";
     }
 
     @GetMapping("/profile")
-    public ModelAndView getProfile() {
-        return new ModelAndView("profile");
+    public String getProfile(final Model model) {
+        return "profile";
     }
 
     @GetMapping("/about-us")
-    public ModelAndView getAboutUs() {
-        return new ModelAndView("about-us");
+    public String getAboutUs(final Model model) {
+        return "about-us";
     }
 
     @GetMapping("/privacy-policy")
-    public ModelAndView getPrivacyPolicy() {
-        return new ModelAndView("privacy-policy");
+    public String getPrivacyPolicy(final Model model) {
+        return "privacy-policy";
     }
 
     @GetMapping("/terms-and-conditions")
-    public ModelAndView getTermsAndConditions() {
-        return new ModelAndView("terms-and-conditions");
+    public String getTermsAndConditions(final Model model) {
+        return "terms-and-conditions";
     }
 
     @GetMapping("/site-map")
-    public ModelAndView getSiteMap() {
-        return new ModelAndView("site-map");
+    public String getSiteMap(final Model model) {
+        return "site-map";
     }
 
     @GetMapping("/contact-us")
-    public ModelAndView getContactUs() {
-        return new ModelAndView("contact-us");
+    public String getContactUs(final Model model) {
+        return "contact-us";
     }
 
     @GetMapping("/offers")
-    public ModelAndView getOffers() {return new ModelAndView("offers");}
+    public String getOffers(final Model model) {
+        return "offers";
+    }
 
     @GetMapping("/offer")
-    public ModelAndView getOffer() {return new ModelAndView("offer");}
+    public String getOffer(final Model model) {
+        return "offer";
+    }
 
     @GetMapping("/add-offer")
-    public ModelAndView getAddOffer() {
-        return new ModelAndView("add-offer");
+    public String getAddOffer(final Model model) {
+        return "add-offer";
+    }
+
+    @GetMapping("/add-engine")
+    public String getAddEngine(final Model model) {
+        if (!model.containsAttribute("engineBindingModel")) {
+            model.addAttribute("engineBindingModel", new EngineBindingModel());
+        }
+        model.addAttribute("brands", brandService.getAllBrands());
+        model.addAttribute("fuelTypes", FuelType.values());
+
+        return "add-engine";
     }
 
     @GetMapping("/my-offers")
-    public ModelAndView getMyOffers() {return new ModelAndView("offers");}
-
-    @GetMapping("/add-engine")
-    public ModelAndView getAddEngine() {return new ModelAndView("add-engine");}
+    public String getMyOffers(final Model model) {
+        return "offers";
+    }
 
     @GetMapping("/add-model")
-    public ModelAndView getAddModel() {return new ModelAndView("add-model");}
+    public String getAddModel(final Model model) {
+        return "add-model";
+    }
 }

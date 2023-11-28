@@ -60,3 +60,11 @@ select {
 .red-two {
     color: red;
 }
+
+.text-danger {
+    color: red;
+}
+
+.text-success {
+   color: green;
+}

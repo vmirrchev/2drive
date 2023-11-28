@@ -13,30 +13,26 @@
 
     <section id="add-engine">
         <!-- New engine form goes here -->
-        <form action="engine.php" method="post">
+        <form th:method="POST" th:action="@{/api/v1/engines}" th:object="${engineBindingModel}">
             <!-- Include input fields for engine information -->
-            <select>
+            <p class="text-success" th:if="${addSuccess == true}">Engine added successfully</p>
+            <p class="text-danger" th:if="${addSuccess == false}">Engine could not be added. Please try again or contact administrator</p>
+            <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>
+            <select name="brandId">
                 <option value="" disabled selected>Select manufacturer</option>
-                <option value="">Mercedes</option>
-                <option value="">Volkswagen</option>
-                <option value="">Alfa romeo</option>
-                <option value="">Fiat</option>
-                <option value="">Audi</option>
-                <option value="">BMW</option>
-                <option value="">Volvo</option>
-                <option value="">Toyota</option>
-                <option value="">Mazda</option>
+                <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
             </select>
-            <select>
+            <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{fuelType}"></p>
+            <select name="fuelType">
                 <option value="" disabled selected>Select fuel type</option>
-                <option value="">PETROL</option>
-                <option value="">DIESEL</option>
-                <option value="">HYBRID</option>
-                <option value="">EV</option>
+                <option th:each="fuelType: ${fuelTypes}" th:value="${fuelType}" th:text="${fuelType}"></option>
             </select>
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="text" name="horsepower" placeholder="Horsepower" required>
-            <input type="text" name="displacement" placeholder="Displacement" required>
+            <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+            <input type="text" name="name" placeholder="Name">
+            <p class="text-danger" th:if="${#fields.hasErrors('horsepower')}" th:errors="*{horsepower}"></p>
+            <input type="number" name="horsepower" placeholder="Horsepower">
+            <p class="text-danger" th:if="${#fields.hasErrors('displacement')}" th:errors="*{displacement}"></p>
+            <input type="number" name="displacement" placeholder="Displacement">
             <button type="submit">Add engine</button>
         </form>
     </section>
