@@ -8,9 +8,11 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.EngineBindingModel;
+import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.service.EngineService;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,6 +30,8 @@ class EngineControllerTest {
     private final BindingResult bindingResult = mock(BindingResult.class);
     private final RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
     private final String redirectUrl = "redirect:/add-engine";
+    private final Long brandId = 1L;
+    private final String exceptionMessage = "message";
 
     @AfterEach
     public void clean() {
@@ -61,7 +65,6 @@ class EngineControllerTest {
 
     @Test
     void createEngineShouldHandleExceptions(CapturedOutput capturedOutput) {
-        final String exceptionMessage = "message";
         when(bindingResult.hasErrors()).thenReturn(false);
         doThrow(new RuntimeException(exceptionMessage)).when(engineService).createEngine(engineBindingModel);
 
@@ -72,5 +75,27 @@ class EngineControllerTest {
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", false);
         assertThat(capturedOutput.getOut()).contains(MessageFormat.format("Engine creation operation failed. {0}", exceptionMessage));
         assertEquals(redirectUrl, result);
+    }
+
+    @Test
+    void getEnginesByBrandShouldReturnEngines() {
+        final List<Engine> engines = List.of(mock(Engine.class), mock(Engine.class));
+        when(engineService.getAllEnginesByBrandId(brandId)).thenReturn(engines);
+
+        final List<Engine> result = engineController.getEnginesByBrand(brandId);
+
+        assertEquals(engines, result);
+        verify(engineService, times(1)).getAllEnginesByBrandId(brandId);
+    }
+
+    @Test
+    void getEnginesByBrandShouldHandleExceptions(CapturedOutput capturedOutput) {
+        doThrow(new RuntimeException(exceptionMessage)).when(engineService).getAllEnginesByBrandId(brandId);
+
+        final List<Engine> result = engineController.getEnginesByBrand(brandId);
+
+        assertThat(result).isEmpty();
+        assertThat(capturedOutput.getOut()).contains(MessageFormat.format("Engine retrieval operation failed. {0}", exceptionMessage));
+        verify(engineService, times(1)).getAllEnginesByBrandId(brandId);
     }
 }

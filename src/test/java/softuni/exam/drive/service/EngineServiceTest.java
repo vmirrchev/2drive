@@ -9,6 +9,8 @@ import softuni.exam.drive.model.enums.FuelType;
 import softuni.exam.drive.repository.EngineRepository;
 
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,10 +27,14 @@ class EngineServiceTest {
     private final EngineService engineService = new EngineService(engineRepository, brandService);
     private final EngineBindingModel engineBindingModel = mock(EngineBindingModel.class);
     private final Brand engineBrand = mock(Brand.class);
+    private final Engine engine = mock(Engine.class);
     private final FuelType engineFuelType = FuelType.DIESEL;
     private final String engineName = "M47TUD20";
     private final Integer engineDisplacement = 1995;
     private final Integer engineHorsepower = 150;
+    private final Long engineId = 1L;
+    private final Long brandId = 1L;
+    private final String exceptionMessage = "message";
 
     @BeforeEach
     public void setUp() {
@@ -53,7 +59,7 @@ class EngineServiceTest {
         verify(engineRepository, times(1)).existsByName(engineName);
         verify(engineRepository).save(argumentCaptor.capture());
         final Engine engine = argumentCaptor.getValue();
-        assertEquals(engineBrand, engine.getManufacturer());
+        assertEquals(engineBrand, engine.getBrand());
         assertEquals(engineFuelType, engine.getFuelType());
         assertEquals(engineName, engine.getName());
         assertEquals(engineDisplacement, engine.getDisplacement());
@@ -62,13 +68,12 @@ class EngineServiceTest {
 
     @Test
     void createEngineShouldThrowWhenInvalidBrandId() {
-        final String exceptionMessage = "message";
         doThrow(new RuntimeException(exceptionMessage)).when(brandService).getById(any());
 
         final Throwable thrown = assertThrows(RuntimeException.class, () -> engineService.createEngine(engineBindingModel));
 
-        verify(engineBindingModel, times(0)).getName();
-        verify(engineRepository, times(0)).existsByName(engineName);
+        verify(engineBindingModel, times(1)).getName();
+        verify(engineRepository, times(1)).existsByName(engineName);
         verify(engineBindingModel, times(0)).getFuelType();
         verify(engineBindingModel, times(0)).getDisplacement();
         verify(engineBindingModel, times(0)).getHorsepower();
@@ -91,5 +96,55 @@ class EngineServiceTest {
         verify(engineBindingModel, times(0)).getHorsepower();
         verify(engineRepository, times(0)).save(any());
         assertEquals(exceptionMessage, thrown.getMessage());
+    }
+
+    @Test
+    void getEngineByIdShouldReturnEngine() {
+        final Engine engine = new Engine();
+        when(engineRepository.findById(engineId)).thenReturn(Optional.of(engine));
+
+        assertEquals(engine, engineService.getEngineById(engineId));
+        verify(engineRepository, times(1)).findById(engineId);
+    }
+
+    @Test
+    void getEngineByIdShouldThrowWhenIdNull() {
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> engineService.getEngineById(null));
+
+        assertEquals(thrown.getMessage(), "Engine id cannot be null");
+        verify(engineRepository, times(0)).findById(any());
+    }
+
+    @Test
+    void getEngineByIdShouldThrowWhenIdInvalid() {
+        final String exceptionMessage = MessageFormat.format("There is no engine for the given id ({0})", engineId);
+        when(engineRepository.findById(engineId)).thenReturn(Optional.empty());
+
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> engineService.getEngineById(engineId));
+
+        assertEquals(thrown.getMessage(), exceptionMessage);
+        verify(engineRepository, times(1)).findById(engineId);
+    }
+
+    @Test
+    void getAllEnginesByBrandIdShouldReturnList() {
+        final List<Engine> engines = List.of(engine);
+        when(brandService.getById(brandId)).thenReturn(engineBrand);
+        when(engineRepository.findAllByBrand(engineBrand)).thenReturn(engines);
+
+        assertEquals(engines, engineService.getAllEnginesByBrandId(brandId));
+        verify(brandService, times(1)).getById(brandId);
+        verify(engineRepository, times(1)).findAllByBrand(engineBrand);
+    }
+
+    @Test
+    void getAllEnginesByBrandIdShouldThrowWhenBrandIdInvalid() {
+        doThrow(new RuntimeException(exceptionMessage)).when(brandService).getById(brandId);
+
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> engineService.getAllEnginesByBrandId(brandId));
+
+        assertEquals(exceptionMessage, thrown.getMessage());
+        verify(brandService, times(1)).getById(brandId);
+        verify(engineRepository, times(0)).findAllByBrand(engineBrand);
     }
 }

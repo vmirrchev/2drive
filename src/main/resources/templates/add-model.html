@@ -16,105 +16,51 @@
 
     <section id="add-model">
         <!-- New model form goes here -->
-        <form action="model.php" method="post">
+        <form th:method="POST" th:action="@{/v1/api/models}" th:object="${modelBindingModel}">
             <!-- Include input fields for model information -->
             <!-- dropdown with brands -->
-            <select>
-                <option value="" disabled selected>Select brand</option>
-                <option value="">Mercedes</option>
-                <option value="">Volkswagen</option>
-                <option value="">Alfa romeo</option>
-                <option value="">Fiat</option>
-                <option value="">Audi</option>
-                <option value="">BMW</option>
-                <option value="">Volvo</option>
-                <option value="">Toyota</option>
-                <option value="">Mazda</option>
+            <p class="text-success" th:if="${addSuccess == true}">Model added successfully</p>
+            <p class="text-danger" th:if="${addSuccess == false}">Model could not be added. Please try again or contact administrator</p>
+            <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>
+            <select name="brandId" onchange="fetchEngines()">
+                <option value="" disabled selected>Select manufacturer</option>
+                <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
             </select>
             <!-- dropdowns with engines for the brand -->
-            <select>
+            <p class="text-danger" th:if="${#fields.hasErrors('engineIds')}" th:errors="*{engineIds}"></p>
+            <select name="engineIds" multiple>
                 <option value="" disabled selected>Select engine</option>
-                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
-                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
-                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
             </select>
-            <select>
-                <option value="" disabled selected>Select engine</option>
-                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
-                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
-                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            <!-- dropdowns with body types -->
+            <p class="text-danger" th:if="${#fields.hasErrors('bodyTypes')}" th:errors="*{bodyTypes}"></p>
+            <select name="bodyTypes" multiple>
+                <option value="" disabled selected>Select body type</option>
+                <option th:each="bodyType:${bodyTypes}" th:value="${bodyType}" th:text="${bodyType}"></option>
             </select>
-            <select>
-                <option value="" disabled selected>Select engine</option>
-                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
-                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
-                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            <!-- dropdowns with drive types -->
+            <p class="text-danger" th:if="${#fields.hasErrors('driveTypes')}" th:errors="*{driveTypes}"></p>
+            <select name="driveTypes" multiple>
+                <option value="" disabled selected>Select drive type</option>
+                <option th:each="driveType:${driveTypes}" th:value="${driveType}" th:text="${driveType}"></option>
             </select>
-            <select>
-                <option value="" disabled selected>Select engine</option>
-                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
-                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
-                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
+            <!-- dropdowns with transmission types -->
+            <p class="text-danger" th:if="${#fields.hasErrors('transmissionTypes')}" th:errors="*{transmissionTypes}"></p>
+            <select name="transmissionTypes" multiple>
+                <option value="" disabled selected>Select drive type</option>
+                <option th:each="transmissionType:${transmissionTypes}" th:value="${transmissionType}" th:text="${transmissionType}"></option>
             </select>
-            <select>
-                <option value="" disabled selected>Select engine</option>
-                <option value="">M47TUD20 (DIESEL, 150HP, 1995cc)</option>
-                <option value="">M54B22 (PETROl, 170HP, 2195cc)</option>
-                <option value="">M54BB25 (PETROL, 193HP 2495cc)</option>
-            </select>
-            <div class="body-type-container">
-                <div class="container-title">
-                    <p>Body type</p>
-                </div>
-                <div class="body-types">
-                    <div class="body-type>">
-                        <label for="hatchback">HATCHBACK</label>
-                        <input type="checkbox" name="hatchback" id="hatchback" required>
-                    </div>
-                    <div class="body-type>">
-                        <label for="wagon">WAGON</label>
-                        <input type="checkbox" name="wagon" id="wagon" required>
-                    </div>
-                    <div class="body-type>">
-                        <label for="saloon">SALOON</label>
-                        <input type="checkbox" name="saloon" id="saloon" required>
-                    </div>
-                </div>
-            </div>
-            <!-- Include checkbox fields for model drive types -->
-            <div class="drive-type-container">
-                <div class="container-title">
-                    <p>Drive</p>
-                </div>
-                <div class="drive-types">
-                    <label for="fwd">FWR</label>
-                    <input type="checkbox" name="fwd" id="fwd" required>
-                    <label for="rwd">RWD</label>
-                    <input type="checkbox" name="rwd" id="rwd" required>
-                    <label for="awd">AWD</label>
-                    <input type="checkbox" name="awd" id="awd" required>
-                </div>
-            </div>
-            <!-- Include checkbox fields for model transmission types -->
-            <div class="transmission-type-container">
-                <div class="container-title">
-                    <p>Transmission</p>
-                </div>
-                <div class="transmission-types">
-                    <label for="manual">MANUAL</label>
-                    <input type="checkbox" name="manual" id="manual" required>
-                    <label for="auto">AUTOMATIC</label>
-                    <input type="checkbox" name="auto" id="auto" required>
-                </div>
-            </div>
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="text" name="startYear" placeholder="Start year" required>
-            <input type="text" name="endYear" placeholder="End year" required>
-            <button type="submit">Add engine</button>
+            <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+            <input type="text" name="name" placeholder="Name">
+            <p class="text-danger" th:if="${#fields.hasErrors('startYear')}" th:errors="*{startYear}"></p>
+            <input type="number" name="startYear" placeholder="Start year">
+            <p class="text-danger" th:if="${#fields.hasErrors('endYear')}" th:errors="*{endYear}"></p>
+            <input type="number" name="endYear" placeholder="End year">
+            <button type="submit">Add model</button>
         </form>
     </section>
 </main>
 <footer th:replace="~{fragments/commons::footer}"></footer>
+<script th:src="@{/js/app.js}"></script>
 </body>
 
 </html>

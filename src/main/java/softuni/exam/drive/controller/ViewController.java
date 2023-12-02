@@ -5,7 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import softuni.exam.drive.model.dto.EngineBindingModel;
+import softuni.exam.drive.model.dto.ModelBindingModel;
+import softuni.exam.drive.model.enums.BodyType;
+import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.FuelType;
+import softuni.exam.drive.model.enums.TransmissionType;
 import softuni.exam.drive.service.BrandService;
 
 /**
@@ -94,6 +98,14 @@ public class ViewController {
 
     @GetMapping("/add-model")
     public String getAddModel(final Model model) {
+        if (!model.containsAttribute("modelBindingModel")) {
+            model.addAttribute("modelBindingModel", new ModelBindingModel());
+        }
+        model.addAttribute("brands", brandService.getAllBrands());
+        model.addAttribute("bodyTypes", BodyType.values());
+        model.addAttribute("driveTypes", DriveType.values());
+        model.addAttribute("transmissionTypes", TransmissionType.values());
+
         return "add-model";
     }
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.ui.Model;
 import softuni.exam.drive.model.dto.EngineBindingModel;
+import softuni.exam.drive.model.dto.ModelBindingModel;
 import softuni.exam.drive.service.BrandService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,9 +20,14 @@ class ViewControllerTest {
     private final ViewController viewController = new ViewController(brandService);
     private final Model model = mock(Model.class);
     private final String engineBindingModelAttribute = "engineBindingModel";
+    private final String modelBindingModelAttribute = "modelBindingModel";
     private final String brandsAttribute = "brands";
     private final String fuelTypesAttribute = "fuelTypes";
+    private final String bodyTypesAttribute = "bodyTypes";
+    private final String driveTypesAttribute = "driveTypes";
+    private final String transmissionTypesAttribute = "transmissionTypes";
     private final String addEnginePath = "add-engine";
+    private final String addModelPath = "add-model";
 
     @Test
     void getIndex() {
@@ -122,5 +128,43 @@ class ViewControllerTest {
     @Test
     void getAddModel() {
         assertEquals("add-model", viewController.getAddModel(model));
+    }
+
+    @Test
+    void testGetAddModelShouldUseNewModelBindingModel() {
+        final ArgumentCaptor<ModelBindingModel> argumentCaptor = ArgumentCaptor.forClass(ModelBindingModel.class);
+        when(model.containsAttribute(modelBindingModelAttribute)).thenReturn(false);
+
+        final String result = viewController.getAddModel(model);
+
+        verify(model).addAttribute(eq(modelBindingModelAttribute), argumentCaptor.capture());
+        verify(model).addAttribute(eq(brandsAttribute), any());
+        verify(model).addAttribute(eq(bodyTypesAttribute), any());
+        verify(model).addAttribute(eq(driveTypesAttribute), any());
+        verify(model).addAttribute(eq(transmissionTypesAttribute), any());
+        final ModelBindingModel modelBindingModel = argumentCaptor.getValue();
+        assertNull(modelBindingModel.getName());
+        assertNull(modelBindingModel.getBrandId());
+        assertNull(modelBindingModel.getBodyTypes());
+        assertNull(modelBindingModel.getDriveTypes());
+        assertNull(modelBindingModel.getTransmissionTypes());
+        assertNull(modelBindingModel.getEngineIds());
+        assertNull(modelBindingModel.getStartYear());
+        assertNull(modelBindingModel.getEndYear());
+        assertEquals(addModelPath, result);
+    }
+
+    @Test
+    void testGetAddModelShouldNotUseNewModelBindingModel() {
+        when(model.containsAttribute(modelBindingModelAttribute)).thenReturn(true);
+
+        final String result = viewController.getAddModel(model);
+
+        verify(model, times(0)).addAttribute(eq(modelBindingModelAttribute), any());
+        verify(model).addAttribute(eq(brandsAttribute), any());
+        verify(model).addAttribute(eq(bodyTypesAttribute), any());
+        verify(model).addAttribute(eq(driveTypesAttribute), any());
+        verify(model).addAttribute(eq(transmissionTypesAttribute), any());
+        assertEquals(addModelPath, result);
     }
 }

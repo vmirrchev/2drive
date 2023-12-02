@@ -9,6 +9,7 @@ import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.TransmissionType;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,15 +43,15 @@ public class Model {
 
     @NotNull
     @ElementCollection
-    private Set<BodyType> bodyTypes;
+    private List<BodyType> bodyTypes;
 
     @NotNull
     @ElementCollection
-    private Set<DriveType> driveTypes;
+    private List<DriveType> driveTypes;
 
     @NotNull
     @ElementCollection
-    private Set<TransmissionType> transmissions;
+    private List<TransmissionType> transmissions;
 
     @ManyToOne()
     @JoinColumn(name = "brand_id", referencedColumnName = "id")

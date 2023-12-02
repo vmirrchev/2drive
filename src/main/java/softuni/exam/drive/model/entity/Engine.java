@@ -41,5 +41,5 @@ public class Engine {
 
     @ManyToOne
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
-    private Brand manufacturer;
+    private Brand brand;
 }
