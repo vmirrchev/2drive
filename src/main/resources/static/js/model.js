@@ -2,7 +2,7 @@ function fetchEngines() {
     let selectedElement = document.getElementsByName("brandId")[0];
     let targetElements = document.getElementsByName("engineIds");
 
-    fetch('/v1/api/engines/filter?brandId=' + selectedElement.value)
+    fetch('/api/v1/engines/filter?brandId=' + selectedElement.value)
         .then(response => response.json())
         .then(engines => {
             for (const targetElement of targetElements) {

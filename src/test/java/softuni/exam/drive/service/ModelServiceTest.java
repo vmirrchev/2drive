@@ -15,6 +15,7 @@ import softuni.exam.drive.repository.ModelRepository;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +47,9 @@ class ModelServiceTest {
     private final Set<Engine> engines = Set.of(firstEngine, secondEngine);
     private final int startYear = 2004;
     private final int endYear = 2010;
+    private final Model model = mock(Model.class);
+    private final String exceptionMessage = "message";
+    private final Long modelId = 1L;
 
     @BeforeEach
     public void setUp() {
@@ -84,7 +88,7 @@ class ModelServiceTest {
         assertEquals(endYear, model.getEndYear());
         assertEquals(bodyTypes, model.getBodyTypes());
         assertEquals(driveTypes, model.getDriveTypes());
-        assertEquals(transmissionTypes, model.getTransmissions());
+        assertEquals(transmissionTypes, model.getTransmissionTypes());
         assertEquals(modelBrand, model.getBrand());
         assertEquals(engines, model.getEngines());
     }
@@ -121,7 +125,6 @@ class ModelServiceTest {
 
     @Test
     void createModelShouldThrowWhenEngineIdInvalid() {
-        final String exceptionMessage = "message";
         doThrow(new RuntimeException(exceptionMessage)).when(engineService).getEngineById(firstEngineId);
 
         final Throwable thrown = assertThrows(RuntimeException.class, () -> modelService.createModel(modelBindingModel));
@@ -132,5 +135,57 @@ class ModelServiceTest {
         verify(brandService, times(1)).getById(brandId);
         verify(engineService, times(1)).getEngineById(firstEngineId);
         verify(modelRepository, times(0)).save(any());
+    }
+
+    @Test
+    void getModelByIdShouldReturnModel() {
+        final Model model = mock(Model.class);
+        when(modelRepository.findById(modelId)).thenReturn(Optional.ofNullable(model));
+
+        assertEquals(model, modelService.getModelById(modelId));
+        verify(modelRepository, times(1)).findById(modelId);
+    }
+
+    @Test
+    void getModelByIdShouldThrowWhenIdINull() {
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> modelService.getModelById(null));
+
+        assertEquals(thrown.getMessage(), "Model id cannot be null");
+        verify(modelRepository, times(0)).findById(any());
+    }
+
+    @Test
+    void getModelByIdShouldThrowWhenIdInvalid() {
+        final String exceptionMessage = MessageFormat.format("There is no car model for the given id ({0})", modelId);
+        when(modelRepository.findById(modelId)).thenReturn(Optional.empty());
+
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> modelService.getModelById(modelId));
+
+        assertEquals(exceptionMessage, thrown.getMessage());
+        verify(modelRepository, times(1)).findById(modelId);
+    }
+
+    @Test
+    void getAllModelsByBrandIdShouldReturnModels() {
+        final List<Model> models = List.of(model);
+        when(brandService.getById(brandId)).thenReturn(modelBrand);
+        when(modelRepository.findAllByBrand(modelBrand)).thenReturn(models);
+
+        final List<Model> result = modelService.getAllModelsByBrandId(brandId);
+
+        assertEquals(models, result);
+        verify(brandService, times(1)).getById(brandId);
+        verify(modelRepository, times(1)).findAllByBrand(modelBrand);
+    }
+
+    @Test
+    void getAllModelsByBrandIdShouldThrowWhenBrandIdInvalid() {
+        doThrow(new RuntimeException(exceptionMessage)).when(brandService).getById(brandId);
+
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> modelService.getAllModelsByBrandId(brandId));
+
+        assertEquals(exceptionMessage, thrown.getMessage());
+        verify(brandService, times(1)).getById(brandId);
+        verify(modelRepository, times(0)).findAllByBrand(any());
     }
 }

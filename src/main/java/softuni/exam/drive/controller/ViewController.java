@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import softuni.exam.drive.model.dto.EngineBindingModel;
 import softuni.exam.drive.model.dto.ModelBindingModel;
+import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.FuelType;
@@ -77,6 +78,11 @@ public class ViewController {
 
     @GetMapping("/add-offer")
     public String getAddOffer(final Model model) {
+        if (!model.containsAttribute("offerBindingModel")) {
+            model.addAttribute("offerBindingModel", new OfferBindingModel());
+        }
+        model.addAttribute("brands", brandService.getAllBrands());
+
         return "add-offer";
     }
 

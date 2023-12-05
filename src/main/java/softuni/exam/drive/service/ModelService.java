@@ -10,6 +10,7 @@ import softuni.exam.drive.repository.ModelRepository;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -48,11 +49,36 @@ public class ModelService {
         model.setEngines(engines);
         model.setBodyTypes(modelBindingModel.getBodyTypes());
         model.setDriveTypes(modelBindingModel.getDriveTypes());
-        model.setTransmissions(modelBindingModel.getTransmissionTypes());
+        model.setTransmissionTypes(modelBindingModel.getTransmissionTypes());
         model.setName(modelBindingModel.getName());
         model.setStartYear(modelBindingModel.getStartYear());
         model.setEndYear(modelBindingModel.getEndYear());
 
         modelRepository.save(model);
+    }
+
+    /**
+     * Get the car model object for the given id
+     * @param modelId model identifier
+     * @return Model with given id
+     * @throws RuntimeException if modelId is invalid
+     */
+    public Model getModelById(Long modelId) {
+        if (modelId == null) {
+            throw new RuntimeException("Model id cannot be null");
+        }
+        return modelRepository.findById(modelId)
+                .orElseThrow(() -> new RuntimeException(MessageFormat.format("There is no car model for the given id ({0})", modelId)));
+    }
+
+    /**
+     * Get a list of model objects for the given brand id
+     * @param brandId brand identifier
+     * @return List of models
+     * @throws RuntimeException if brandId is invalid
+     */
+    public List<Model> getAllModelsByBrandId(Long brandId) {
+        final Brand brand = brandService.getById(brandId);
+        return modelRepository.findAllByBrand(brand);
     }
 }

@@ -16,7 +16,7 @@
 
     <section id="add-model">
         <!-- New model form goes here -->
-        <form th:method="POST" th:action="@{/v1/api/models}" th:object="${modelBindingModel}">
+        <form th:method="POST" th:action="@{/api/v1/models}" th:object="${modelBindingModel}">
             <!-- Include input fields for model information -->
             <!-- dropdown with brands -->
             <p class="text-success" th:if="${addSuccess == true}">Model added successfully</p>
@@ -60,7 +60,7 @@
     </section>
 </main>
 <footer th:replace="~{fragments/commons::footer}"></footer>
-<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/model.js}"></script>
 </body>
 
 </html>

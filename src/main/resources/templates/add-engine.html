@@ -13,7 +13,7 @@
 
     <section id="add-engine">
         <!-- New engine form goes here -->
-        <form th:method="POST" th:action="@{/v1/api/engines}" th:object="${engineBindingModel}">
+        <form th:method="POST" th:action="@{/api/v1/engines}" th:object="${engineBindingModel}">
             <!-- Include input fields for engine information -->
             <p class="text-success" th:if="${addSuccess == true}">Engine added successfully</p>
             <p class="text-danger" th:if="${addSuccess == false}">Engine could not be added. Please try again or contact administrator</p>

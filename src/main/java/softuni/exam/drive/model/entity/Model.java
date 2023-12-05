@@ -51,7 +51,7 @@ public class Model {
 
     @NotNull
     @ElementCollection
-    private List<TransmissionType> transmissions;
+    private List<TransmissionType> transmissionTypes;
 
     @ManyToOne()
     @JoinColumn(name = "brand_id", referencedColumnName = "id")

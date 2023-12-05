@@ -3,10 +3,10 @@ package softuni.exam.drive.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.TransmissionType;
 
@@ -23,7 +23,7 @@ public class Offer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Length(min = 3, max = 20)
+    @Length(min = 3, max = 30)
     @NotNull
     private String title;
 
@@ -45,6 +45,8 @@ public class Offer {
     @NotNull
     private String color;
 
+    private byte[] picture;
+
     @NotNull
     private String description;
 
@@ -53,6 +55,10 @@ public class Offer {
 
     @NotNull
     private boolean hasAccidentDamage;
+
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    private BodyType bodyType;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)

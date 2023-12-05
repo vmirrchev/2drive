@@ -21,7 +21,7 @@ import java.util.List;
  * @author Vasil Mirchev
  */
 @Controller
-@RequestMapping("/v1/api/engines")
+@RequestMapping("/api/v1/engines")
 @RequiredArgsConstructor
 public class EngineController {
 
