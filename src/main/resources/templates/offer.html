@@ -8,52 +8,54 @@
 </head>
 
 <body>
-<header th:replace="~{fragments/commons::header}"></header>
-<main>
-  <section id="title">
-    <h2>Offer</h2>
-  </section>
+  <header th:replace="~{fragments/commons::header}"></header>
+  <main>
+    <section id="title">
+      <h2>Offer</h2>
+    </section>
 
-  <section id="offer">
-    <div class="offer">
-      <div class="offer-image">
-        <img th:src="@{/img/car-for-sale.png}"/>
+    <section id="offer">
+      <p class="offers-message" th:if="${offer == null}">Apologies! The offer you're looking for isn't available. Check out other exciting deals on our website!</p>
+      <div class="offer" th:unless="${offer == null}">
+        <div class="offer-image">
+          <img th:if="${offer.picture != null}" th:src="@{'data:image/jpeg;base64,'+${offer.generateBase64Image()}}"/>
+          <img th:unless="${offer.picture != null}" th:src="@{/img/no-image.png}"/>
+        </div>
+        <div class="offer-details">
+          <div class="offer-title">
+            <h2 th:text="${offer.title}">2006 BMW 3 series perfect condition</h2>
+          </div>
+          <div class="car-details">
+            <h3>Car info</h3>
+            <ul>
+              <li th:text="'Brand: ' + ${offer.model.brand.name}">Brand: BMW</li>
+              <li th:text="'Model: ' + ${offer.model.name}">Model: 3 Series</li>
+              <li th:text="'Fuel type: ' + ${#strings.toLowerCase(offer.engine.fuelType)}">Fuel type: Petrol</li>
+              <li th:text="'Displacement: ' + ${offer.engine.displacement} + 'cc'">Displacement: 1995 cc</li>
+              <li th:text="'Power: ' + ${offer.engine.horsepower} +'HP'">Power: 150 hp</li>
+              <li th:text="'Transmission: ' + ${#strings.toLowerCase(offer.transmissionType)}">Transmission: Automatic</li>
+              <li th:text="'Drive type: ' + ${#strings.toLowerCase(offer.driveType)}">Drive type: RWD</li>
+              <li th:text="'Color: ' + ${offer.color}">Color: Midnight Black</li>
+              <li th:text="'Odometer: ' + ${offer.odometer} + 'KM'">Odometer: 123 000KM</li>
+              <li th:text="'Production year: ' + ${offer.year}">Production year: 2006</li>
+              <li th:text="'Service book: ' + ${offer.hasServiceBook == true ? 'yes' : 'no'} ">Service book: YES</li>
+              <li th:text="'Accident damage: ' + ${offer.hasAccidentDamage == true ? 'yes' : 'no'}">Accident damage: NO</li>
+              <li th:text="'Description: ' + ${offer.description}">Description: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</li>
+              <li th:text="'Price: ' + ${offer.price} + 'BGN'">Price: 5000 USD</li>
+            </ul>
+          </div>
+          <div class="seller-details">
+            <h3>Seller info</h3>
+            <ul>
+              <li>Name: Jon Doe</li>
+              <li>Phone number: 0888404040</li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div class="offer-details">
-        <div class="offer-title">
-          <h2>2006 BMW 3 series perfect condition</h2>
-        </div>
-        <div class="car-details">
-          <h3>Car info</h3>
-          <ul>
-            <li>Brand: BMW</li>
-            <li>Model: 3 Series</li>
-            <li>Fuel type: Petrol</li>
-            <li>Displacement: 1995 cc</li>
-            <li>Power: 150 hp</li>
-            <li>Transmission: Automatic</li>
-            <li>Drive type: RWD</li>
-            <li>Color: Midnight Black</li>
-            <li>Odometer: 123 000KM</li>
-            <li>Production year: 2006</li>
-            <li>Service book: YES</li>
-            <li>Accident damage: NO</li>
-            <li>Description: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</li>
-            <li>Price: 5000 USD</li>
-          </ul>
-        </div>
-        <div class="seller-details">
-          <h3>Seller info</h3>
-          <ul>
-            <li>Name: Jon Doe</li>
-            <li>Phone number: 0888404040</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-<footer th:replace="~{fragments/commons::footer}"></footer>
+    </section>
+  </main>
+  <footer th:replace="~{fragments/commons::footer}"></footer>
 </body>
 
 </html>

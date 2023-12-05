@@ -32,39 +32,9 @@
         </section>
 
         <section id="find-car">
-            <div class="featured-type">
+            <div class="featured-type" th:each="bodyType:${bodyTypes}">
                 <img th:src="@{/img/car-side-image.png}"/>
-                <a href="#shop-now" class="cta-button">Shop HATCHBACK</a>
-            </div>
-
-            <div class="featured-type">
-                <img th:src="@{/img/car-side-image.png}"/>
-                <a href="#shop-now" class="cta-button">Shop SUV</a>
-            </div>
-
-            <div class="featured-type">
-                <img th:src="@{/img/car-side-image.png}"/>
-                <a href="#shop-now" class="cta-button">Shop MINIVAN</a>
-            </div>
-
-            <div class="featured-type">
-                <img th:src="@{/img/car-side-image.png}"/>
-                <a href="#shop-now" class="cta-button">Shop SEDAN</a>
-            </div>
-
-            <div class="featured-type">
-                <img th:src="@{/img/car-side-image.png}"/>
-                <a href="#shop-now" class="cta-button">Shop CONVERTIBLE</a>
-            </div>
-
-            <div class="featured-type">
-                <img th:src="@{/img/car-side-image.png}"/>
-                <a href="#shop-now" class="cta-button">Shop COUPE</a>
-            </div>
-
-            <div class="featured-type">
-                <img th:src="@{/img/car-side-image.png}"/>
-                <a href="#shop-now" class="cta-button">Shop WAGON</a>
+                <a th:href="@{/offers/filter(bodyType=${bodyType})}" class="cta-button" th:text="'Shop ' + ${#strings.toLowerCase(bodyType)}">Shop HATCHBACK</a>
             </div>
         </section>
 

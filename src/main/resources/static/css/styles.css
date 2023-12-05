@@ -68,3 +68,7 @@ select {
 .text-success {
    color: green;
 }
+
+.offers-message {
+    text-align: center;
+}

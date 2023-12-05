@@ -10,6 +10,8 @@ import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.TransmissionType;
 
+import java.util.Base64;
+
 /**
  * Entity class representing the car offer database model
  * @author Vasil Mirchev
@@ -79,4 +81,8 @@ public class Offer {
     @ManyToOne()
     @JoinColumn(name = "engine_id", referencedColumnName = "id")
     private Engine engine;
+
+    public String generateBase64Image() {
+        return Base64.getEncoder().encodeToString(picture);
+    }
 }

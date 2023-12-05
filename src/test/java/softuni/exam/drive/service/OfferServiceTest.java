@@ -15,6 +15,9 @@ import softuni.exam.drive.model.enums.TransmissionType;
 import softuni.exam.drive.repository.OfferRepository;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,9 +32,11 @@ class OfferServiceTest {
     private final OfferRepository offerRepository = mock(OfferRepository.class);
     private final OfferService offerService = new OfferService(modelService, engineService, offerRepository);
     private final OfferBindingModel offerBindingModel = mock(OfferBindingModel.class);
+    private final Offer offer = mock(Offer.class);
     private final Model model = mock(Model.class);
     private final Engine engine = mock(Engine.class);
     private final MultipartFile picture = mock(MultipartFile.class);
+    private final Long offerId = 1L;
     private final Long modelId = 1L;
     private final Long engineId = 1L;
     private final BodyType bodyType = BodyType.SEDAN;
@@ -161,5 +166,54 @@ class OfferServiceTest {
         verify(modelService, times(1)).getModelById(modelId);
         verify(engineService, times(1)).getEngineById(any());
         verify(offerRepository, times(0)).save(any());
+    }
+
+    @Test
+    void getOfferByIdShouldReturnOffer() {
+        when(offerRepository.findById(offerId)).thenReturn(Optional.ofNullable(offer));
+
+        assertEquals(offer, offerService.getOfferById(offerId));
+        verify(offerRepository, times(1)).findById(offerId);
+    }
+
+    @Test
+    void getOfferByIdShouldThrowWhenOfferIdNull() {
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.getOfferById(null));
+
+        assertEquals(thrown.getMessage(), "Offer id cannot be null");
+        verify(offerRepository, times(0)).findById(any());
+    }
+
+    @Test
+    void getOfferByIdShouldThrowWhenOfferIdInvalid() {
+        final String exceptionMessage = MessageFormat.format("There is no offer for the given id ({0})", offerId);
+        when(offerRepository.findById(offerId)).thenReturn(Optional.empty());
+
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.getOfferById(offerId));
+
+        assertEquals(exceptionMessage, thrown.getMessage());
+        verify(offerRepository, times(1)).findById(offerId);
+    }
+
+    @Test
+    void getAllOffersShouldReturnOffers() {
+        final List<Offer> offers = List.of(offer);
+        when(offerRepository.findAll()).thenReturn(offers);
+
+        final List<Offer> result = offerService.getAllOffers();
+
+        assertEquals(offers, result);
+        verify(offerRepository, times(1)).findAll();
+    }
+
+    @Test
+    void getAllOffersByBodyTypeShouldReturnOffers() {
+        final List<Offer> offers = List.of(offer);
+        when(offerRepository.findAllByBodyType(bodyType)).thenReturn(offers);
+
+        final List<Offer> result = offerService.getAllOffersByBodyType(bodyType);
+
+        assertEquals(offers, result);
+        verify(offerRepository, times(1)).findAllByBodyType(bodyType);
     }
 }

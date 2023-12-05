@@ -6,9 +6,12 @@ import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.model.entity.Model;
 import softuni.exam.drive.model.entity.Offer;
+import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.repository.OfferRepository;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * Service used for offer related operations
@@ -22,6 +25,11 @@ public class OfferService {
     private final EngineService engineService;
     private final OfferRepository offerRepository;
 
+    /**
+     * Creates offer for the given binding model object
+     * @param offerBindingModel binding model representing the offer dto
+     * @throws RuntimeException when picture bytes can't be retrieved
+     */
     public void createOffer(OfferBindingModel offerBindingModel) {
         final Model model = modelService.getModelById(offerBindingModel.getModelId());
         final Engine engine = engineService.getEngineById(offerBindingModel.getEngineId());
@@ -54,5 +62,36 @@ public class OfferService {
         offer.setPicture(pictureBytes);
 
         offerRepository.save(offer);
+    }
+
+    /**
+     * Get the offer object for the given id
+     * @param offerId engine identifier
+     * @return Offer with given id
+     * @throws RuntimeException if offerId is invalid
+     */
+    public Offer getOfferById(Long offerId) {
+        if (offerId == null) {
+            throw new RuntimeException("Offer id cannot be null");
+        }
+        return offerRepository.findById(offerId)
+                .orElseThrow(() -> new RuntimeException(MessageFormat.format("There is no offer for the given id ({0})", offerId)));
+    }
+
+    /**
+     * Get a list of offers
+     * @return List with all offers
+     */
+    public List<Offer> getAllOffers() {
+        return offerRepository.findAll();
+    }
+
+    /**
+     * Get a list of offers with given body type
+     * @param bodyType body type of the vehicle
+     * @return List with all offers
+     */
+    public List<Offer> getAllOffersByBodyType(BodyType bodyType) {
+        return offerRepository.findAllByBodyType(bodyType);
     }
 }

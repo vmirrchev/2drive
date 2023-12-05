@@ -15,89 +15,23 @@
         </section>
 
         <section id="offers">
-            <div class="offer">
+            <p class="offers-message" th:if="${offers.size() == 0}">Oops! It seems the offers you're looking for aren't available.</p>
+            <div class="offer" th:each="offer:${offers}">
                 <div class="offer-image">
-                    <img th:src="@{/img/car-for-sale.png}"/>
+                    <img th:if="${offer.picture != null}" th:src="@{'data:image/jpeg;base64,'+${offer.generateBase64Image()}}"/>
+                    <img th:unless="${offer.picture != null}" th:src="@{/img/no-image.png}"/>
                 </div>
                 <div class="offer-details">
-                    <h2>2023 Model XYZ Sedan</h2>
+                    <h2 th:text="${offer.title}">2023 Model XYZ Sedan</h2>
                     <ul>
-                        <li>Model: XYZ Sedan</li>
-                        <li>Engine: 2.5L V6</li>
-                        <li>Transmission: Automatic</li>
-                        <li>Color: Midnight Black</li>
-                        <li>Odometer: 123 000KM</li>
-                        <li>Price: 5000 USD</li>
+                        <li th:text="'Model: ' + ${offer.model.name}">Model: XYZ Sedan</li>
+                        <li th:text="'Engine: ' + ${#strings.toLowerCase(offer.engine.fuelType)} + ' ' + ${offer.engine.horsepower} +'HP'">Engine: </li>
+                        <li th:text="'Transmission: ' + ${#strings.toLowerCase(offer.transmissionType)}">Transmission: Automatic</li>
+                        <li th:text="'Color: ' + ${offer.color}">Color: Midnight Black</li>
+                        <li th:text="'Odometer: ' + ${offer.odometer} + 'KM'">Odometer: 123 000KM</li>
+                        <li th:text="'Price: ' + ${offer.price} + 'BGN'">Price: 5000 BGN</li>
                     </ul>
-                    <a href="/offer" class="cta-button">Go to offer</a>
-                </div>
-            </div>
-            <div class="offer">
-                <div class="offer-image">
-                    <img th:src="@{/img/car-for-sale.png}"/>
-                </div>
-                <div class="offer-details">
-                    <h2>2023 Model XYZ Sedan</h2>
-                    <ul>
-                        <li>Model: XYZ Sedan</li>
-                        <li>Engine: 2.5L V6</li>
-                        <li>Transmission: Automatic</li>
-                        <li>Color: Midnight Black</li>
-                        <li>Odometer: 123 000KM</li>
-                        <li>Price: 5000 USD</li>
-                    </ul>
-                    <a href="/offer" class="cta-button">Go to offer</a>
-                </div>
-            </div>
-            <div class="offer">
-                <div class="offer-image">
-                    <img th:src="@{/img/car-for-sale.png}"/>
-                </div>
-                <div class="offer-details">
-                    <h2>2023 Model XYZ Sedan</h2>
-                    <ul>
-                        <li>Model: XYZ Sedan</li>
-                        <li>Engine: 2.5L V6</li>
-                        <li>Transmission: Automatic</li>
-                        <li>Color: Midnight Black</li>
-                        <li>Odometer: 123 000KM</li>
-                        <li>Price: 5000 USD</li>
-                    </ul>
-                    <a href="/offer" class="cta-button">Go to offer</a>
-                </div>
-            </div>
-            <div class="offer">
-                <div class="offer-image">
-                    <img th:src="@{/img/car-for-sale.png}"/>
-                </div>
-                <div class="offer-details">
-                    <h2>2023 Model XYZ Sedan</h2>
-                    <ul>
-                        <li>Model: XYZ Sedan</li>
-                        <li>Engine: 2.5L V6</li>
-                        <li>Transmission: Automatic</li>
-                        <li>Color: Midnight Black</li>
-                        <li>Odometer: 123 000KM</li>
-                        <li>Price: 5000 USD</li>
-                    </ul>
-                    <a href="/offer" class="cta-button">Go to offer</a>
-                </div>
-            </div>
-            <div class="offer">
-                <div class="offer-image">
-                    <img th:src="@{/img/car-for-sale.png}"/>
-                </div>
-                <div class="offer-details">
-                    <h2>2023 Model XYZ Sedan</h2>
-                    <ul>
-                        <li>Model: XYZ Sedan</li>
-                        <li>Engine: 2.5L V6</li>
-                        <li>Transmission: Automatic</li>
-                        <li>Color: Midnight Black</li>
-                        <li>Odometer: 123 000KM</li>
-                        <li>Price: 5000 USD</li>
-                    </ul>
-                    <a href="/offer" class="cta-button">Go to offer</a>
+                    <a th:href="@{/offers/{id}(id=${offer.id})}" class="cta-button">Go to offer</a>
                 </div>
             </div>
         </section>
