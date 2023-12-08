@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import softuni.exam.drive.model.dto.EngineBindingModel;
 import softuni.exam.drive.model.dto.ModelBindingModel;
 import softuni.exam.drive.model.dto.OfferBindingModel;
+import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.Offer;
 import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
@@ -41,7 +42,13 @@ public class ViewController {
     }
 
     @GetMapping("/register")
-    public String getRegister(final Model model) {return "register";}
+    public String getRegister(final Model model) {
+        if (!model.containsAttribute("registerBindingModel")) {
+            model.addAttribute("registerBindingModel", new RegisterBindingModel());
+        }
+
+        return "register";
+    }
 
     @GetMapping("/login")
     public String getLogin(final Model model) {

@@ -8,6 +8,8 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.ui.Model;
 import softuni.exam.drive.model.dto.EngineBindingModel;
 import softuni.exam.drive.model.dto.ModelBindingModel;
+import softuni.exam.drive.model.dto.OfferBindingModel;
+import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.Offer;
 import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
@@ -37,6 +39,8 @@ class ViewControllerTest {
     private final BodyType bodyType = mock(BodyType.class);
     private final String engineBindingModelAttribute = "engineBindingModel";
     private final String modelBindingModelAttribute = "modelBindingModel";
+    private final String registerBindingModelAttribute = "registerBindingModel";
+    private final String offerBindingModelAttribute = "offerBindingModel";
     private final String brandsAttribute = "brands";
     private final String offersAttribute = "offers";
     private final String offerAttribute = "offer";
@@ -47,6 +51,8 @@ class ViewControllerTest {
     private final Long offerId = 1L;
     private final String addEnginePath = "add-engine";
     private final String addModelPath = "add-model";
+    private final String registerPath = "register";
+    private final String addOfferPath = "add-offer";
 
     @Test
     void getIndex() {
@@ -61,8 +67,31 @@ class ViewControllerTest {
     }
 
     @Test
-    void getRegister() {
-        assertEquals("register", viewController.getRegister(model));
+    void getRegisterShouldUseNewRegisterBindingModel() {
+        final ArgumentCaptor<RegisterBindingModel> argumentCaptor = ArgumentCaptor.forClass(RegisterBindingModel.class);
+        when(model.containsAttribute(registerBindingModelAttribute)).thenReturn(false);
+
+        final String result = viewController.getRegister(model);
+
+        verify(model).addAttribute(eq(registerBindingModelAttribute), argumentCaptor.capture());
+        final RegisterBindingModel registerBindingModel = argumentCaptor.getValue();
+        assertNull(registerBindingModel.getUsername());
+        assertNull(registerBindingModel.getFirstName());
+        assertNull(registerBindingModel.getLastName());
+        assertNull(registerBindingModel.getEmail());
+        assertNull(registerBindingModel.getPhoneNumber());
+        assertNull(registerBindingModel.getPassword());
+        assertEquals(registerPath, result);
+    }
+
+    @Test
+    void getRegisterShouldNotUseNewRegisterBindingModel() {
+        when(model.containsAttribute(registerBindingModelAttribute)).thenReturn(true);
+
+        final String result = viewController.getRegister(model);
+
+        verify(model, times(0)).addAttribute(eq(registerBindingModelAttribute), any());
+        assertEquals(registerPath, result);
     }
 
     @Test
@@ -141,8 +170,40 @@ class ViewControllerTest {
     }
 
     @Test
-    void getAddOffer() {
-        assertEquals("add-offer", viewController.getAddOffer(model));
+    void getAddOfferShouldUseNewOfferBindingModel() {
+        final ArgumentCaptor<OfferBindingModel> argumentCaptor = ArgumentCaptor.forClass(OfferBindingModel.class);
+        when(model.containsAttribute(offerBindingModelAttribute)).thenReturn(false);
+
+        final String result = viewController.getAddOffer(model);
+
+        verify(model).addAttribute(eq(offerBindingModelAttribute), argumentCaptor.capture());
+        final OfferBindingModel registerBindingModel = argumentCaptor.getValue();
+        assertNull(registerBindingModel.getModelId());
+        assertNull(registerBindingModel.getEngineId());
+        assertNull(registerBindingModel.getBodyType());
+        assertNull(registerBindingModel.getDriveType());
+        assertNull(registerBindingModel.getTransmissionType());
+        assertNull(registerBindingModel.getTitle());
+        assertNull(registerBindingModel.getColor());
+        assertNull(registerBindingModel.getOdometer());
+        assertNull(registerBindingModel.getYear());
+        assertNull(registerBindingModel.getDescription());
+        assertNull(registerBindingModel.getPrice());
+        assertFalse(registerBindingModel.isHasServiceBook());
+        assertFalse(registerBindingModel.isHasAccidentDamage());
+        assertNull(registerBindingModel.getPicture());
+
+        assertEquals(addOfferPath, result);
+    }
+
+    @Test
+    void getAddOfferShouldNotUseNewOfferBindingModel() {
+        when(model.containsAttribute(offerBindingModelAttribute)).thenReturn(true);
+
+        final String result = viewController.getAddOffer(model);
+
+        verify(model, times(0)).addAttribute(eq(offerBindingModelAttribute), any());
+        assertEquals(addOfferPath, result);
     }
 
     @Test
