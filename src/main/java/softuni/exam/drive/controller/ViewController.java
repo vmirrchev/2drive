@@ -16,6 +16,7 @@ import softuni.exam.drive.model.dto.ModelBindingModel;
 import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.Offer;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.*;
 import softuni.exam.drive.service.BrandService;
 import softuni.exam.drive.service.OfferService;
@@ -74,6 +75,13 @@ public class ViewController {
         if (authentication == null) {
             return "redirect:/login";
         }
+
+        final User user = (User) authentication.getPrincipal();
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("firstName", user.getFirstName());
+        model.addAttribute("lastName", user.getLastName());
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("phoneNumber", user.getPhoneNumber());
 
         return "profile";
     }

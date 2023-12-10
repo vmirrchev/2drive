@@ -14,6 +14,7 @@ import softuni.exam.drive.model.dto.ModelBindingModel;
 import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.Offer;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.*;
 import softuni.exam.drive.service.BrandService;
 import softuni.exam.drive.service.OfferService;
@@ -55,6 +56,12 @@ class ViewControllerTest {
     private final String addModelPath = "add-model";
     private final String registerPath = "register";
     private final String addOfferPath = "add-offer";
+    private final String profilePath = "profile";
+    private final String loginPath = "login";
+    private final String offersPath = "offers";
+    private final String offerPath = "offer";
+    private final String redirectIndexPath = "redirect:/";
+    private final String redirectLoginPath = "redirect:/login";
 
     @AfterEach
     public void clean() {
@@ -77,7 +84,7 @@ class ViewControllerTest {
     void getRegisterShouldRedirectWhenAuthenticated() {
         when(authentication.isAuthenticated()).thenReturn(true);
 
-        assertEquals("redirect:/", viewController.getRegister(model, authentication));
+        assertEquals(redirectIndexPath, viewController.getRegister(model, authentication));
     }
 
     @Test
@@ -111,34 +118,45 @@ class ViewControllerTest {
     @Test
     void getLoginShouldRedirectWhenAuthenticated() {
         when(authentication.isAuthenticated()).thenReturn(true);
-        assertEquals("redirect:/", viewController.getLogin(model, authentication));
+        assertEquals(redirectIndexPath, viewController.getLogin(model, authentication));
     }
 
     @Test
     void getLoginShouldReturnLoginWhenAuthenticationNull() {
-        assertEquals("login", viewController.getLogin(model, null));
+        assertEquals(loginPath, viewController.getLogin(model, null));
     }
 
     @Test
     void getLoginShouldReturnLoginWhenNotAuthenticated() {
         when(authentication.isAuthenticated()).thenReturn(false);
-        assertEquals("login", viewController.getLogin(model, authentication));
-    }
-
-    @Test
-    void getProfileShouldRedirectWhenAuthenticationNull() {
-        assertEquals("redirect:/login", viewController.getProfile(model, null));
+        assertEquals(loginPath, viewController.getLogin(model, authentication));
     }
 
     @Test
     void getLoginError() {
-        assertEquals("login", viewController.getLoginError(model));
+        assertEquals(loginPath, viewController.getLoginError(model));
         verify(model, times(1)).addAttribute("loginError", true);
     }
 
     @Test
+    void getProfileShouldRedirectWhenAuthenticationNull() {
+        assertEquals(redirectLoginPath, viewController.getProfile(model, null));
+    }
+
+    @Test
     void getProfileShouldReturnProfile() {
-        assertEquals("profile", viewController.getProfile(model, authentication));
+        final User user = mock(User.class);
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        final String result = viewController.getProfile(model, authentication);
+
+        verify(authentication, times(1)).getPrincipal();
+        verify(model, times(1)).addAttribute("username", user.getUsername());
+        verify(model, times(1)).addAttribute("firstName", user.getFirstName());
+        verify(model, times(1)).addAttribute("lastName", user.getLastName());
+        verify(model, times(1)).addAttribute("email", user.getEmail());
+        verify(model, times(1)).addAttribute("phoneNumber", user.getPhoneNumber());
+        assertEquals(profilePath, result);
     }
 
     @Test
@@ -168,12 +186,12 @@ class ViewControllerTest {
 
     @Test
     void getOffers() {
-        assertEquals("offers", viewController.getOffers(model));
+        assertEquals(offersPath, viewController.getOffers(model));
     }
 
     @Test
     void getFilteredOffers() {
-        assertEquals("offers", viewController.getOffers(bodyType, model));
+        assertEquals(offersPath, viewController.getOffers(bodyType, model));
         verify(model).addAttribute(eq(offersAttribute), any());
     }
 
@@ -188,7 +206,7 @@ class ViewControllerTest {
         verify(model).addAttribute(eq(offerAttribute), argumentCaptor.capture());
         final Offer offer = argumentCaptor.getValue();
         assertNotNull(offer);
-        assertEquals("offer", result);
+        assertEquals(offerPath, result);
     }
 
     @Test
@@ -203,12 +221,12 @@ class ViewControllerTest {
         verify(model).addAttribute(eq(offerAttribute), argumentCaptor.capture());
         final Offer offer = argumentCaptor.getValue();
         assertNull(offer);
-        assertEquals("offer", result);
+        assertEquals(offerPath, result);
     }
 
     @Test
     void getAddOfferShouldRedirectWhenAuthenticationNull() {
-        assertEquals("redirect:/login", viewController.getAddOffer(model, null));
+        assertEquals(redirectLoginPath, viewController.getAddOffer(model, null));
     }
 
     @Test
@@ -251,7 +269,7 @@ class ViewControllerTest {
     @Test
     void getAddEngineShouldRedirectWhenUserNotAdmin() {
         when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
-        assertEquals("redirect:/", viewController.getAddEngine(model, http));
+        assertEquals(redirectIndexPath, viewController.getAddEngine(model, http));
     }
 
     @Test
@@ -295,18 +313,18 @@ class ViewControllerTest {
 
     @Test
     void getMyOffersShouldRedirectWhenAuthenticationNull() {
-        assertEquals("redirect:/login", viewController.getMyOffers(model, null));
+        assertEquals(redirectLoginPath, viewController.getMyOffers(model, null));
     }
 
     @Test
     void getMyOffersShouldReturnOffers() {
-        assertEquals("offers", viewController.getMyOffers(model, authentication));
+        assertEquals(offersPath, viewController.getMyOffers(model, authentication));
     }
 
     @Test
     void getAddModelShouldRedirectWhenUserNotAdmin() {
         when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
-        assertEquals("redirect:/", viewController.getAddModel(model, http));
+        assertEquals(redirectIndexPath, viewController.getAddModel(model, http));
     }
 
     @Test

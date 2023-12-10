@@ -21,10 +21,11 @@
             <div class="profile-details">
                 <h2>Profile details</h2>
                 <ul>
-                    <li>First name: John</li>
-                    <li>Last name: Doe</li>
-                    <li>Email: john-doe@yahoo.com</li>
-                    <li>Phone number: 0888204060</li>
+                    <li th:text="'Username: ' + ${username}">Username: john_doe</li>
+                    <li th:text="'First name: ' + ${firstName}">First name: John</li>
+                    <li th:text="'Last name: ' + ${lastName}">Last name: Doe</li>
+                    <li th:text="'Email: ' + ${email}">Email: john-doe@yahoo.com</li>
+                    <li th:text="'Phone number: ' + ${email}">Phone number: 0888204060</li>
                 </ul>
             </div>
         </section>
