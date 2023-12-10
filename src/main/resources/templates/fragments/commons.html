@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -18,13 +18,14 @@
         <nav>
             <ul>
                 <li><a th:href="@{/offers}">Offers</a></li>
-                <li><a th:href="@{/add-offer}">Add offer</a></li>
-                <li><a th:href="@{/my-offers}">My offers</a></li>
-                <li><a th:href="@{/add-engine}">Add engine</a></li>
-                <li><a th:href="@{/add-model}">Add model</a></li>
-                <li><a th:href="@{/login}">Login</a></li>
-                <li><a th:href="@{/register}">Register</a></li>
-                <li><a th:href="@{/profile}">Profile</a></li>
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/add-offer}">Add offer</a></li>
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/my-offers}">My offers</a></li>
+                <li sec:authorize="isAuthenticated() and hasRole('ADMIN')"><a th:href="@{/add-engine}">Add engine</a></li>
+                <li sec:authorize="isAuthenticated() and hasRole('ADMIN')"><a th:href="@{/add-model}">Add model</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{/login}">Login</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{/register}">Register</a></li>
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/profile}">Profile</a></li>
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
             </ul>
         </nav>
     </header>

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.Role;
@@ -11,6 +13,7 @@ import softuni.exam.drive.repository.UserRepository;
 
 import java.text.MessageFormat;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -21,7 +24,8 @@ class UserServiceTest {
 
     private final RegisterBindingModel registerBindingModel = mock(RegisterBindingModel.class);
     private final UserRepository userRepository = mock(UserRepository.class);
-    private final UserService userService = new UserService(userRepository);
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UserService userService = new UserService(userRepository, passwordEncoder);
     private final String username = "user";
     private final String firstName = "John";
     private final String lastName = "Doe";
@@ -61,7 +65,7 @@ class UserServiceTest {
         assertEquals(lastName, result.getLastName());
         assertEquals(email, result.getEmail());
         assertEquals(phoneNumber, result.getPhoneNumber());
-        assertEquals(password, result.getPassword());
+        assertThat(passwordEncoder.matches(password, result.getPassword())).isTrue();
         assertEquals(Role.ROLE_USER, result.getRole());
     }
 

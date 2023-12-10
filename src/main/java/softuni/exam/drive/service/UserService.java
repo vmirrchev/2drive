@@ -1,6 +1,7 @@
 package softuni.exam.drive.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.User;
@@ -19,6 +20,7 @@ public class UserService {
 
     private static final String EXCEPTION_MESSAGE_FORMAT = "There is already a user with the given {0} ({1})";
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Creates and saves new user to the database
@@ -49,7 +51,7 @@ public class UserService {
         user.setUsername(username);
         user.setFirstName(firstName);
         user.setLastName(lastName);
-        user.setPassword(registerBindingModel.getPassword());
+        user.setPassword(passwordEncoder.encode(registerBindingModel.getPassword()));
         user.setEmail(email);
         user.setPhoneNumber(phoneNumber);
         user.setRole(Role.ROLE_USER);

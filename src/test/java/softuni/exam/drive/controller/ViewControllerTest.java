@@ -1,20 +1,20 @@
 package softuni.exam.drive.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import softuni.exam.drive.model.dto.EngineBindingModel;
 import softuni.exam.drive.model.dto.ModelBindingModel;
 import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.Offer;
-import softuni.exam.drive.model.enums.BodyType;
-import softuni.exam.drive.model.enums.DriveType;
-import softuni.exam.drive.model.enums.FuelType;
-import softuni.exam.drive.model.enums.TransmissionType;
+import softuni.exam.drive.model.enums.*;
 import softuni.exam.drive.service.BrandService;
 import softuni.exam.drive.service.OfferService;
 
@@ -34,6 +34,8 @@ class ViewControllerTest {
     private final BrandService brandService = mock(BrandService.class);
     private final OfferService offerService = mock(OfferService.class);
     private final ViewController viewController = new ViewController(brandService, offerService);
+    private final HttpServletRequest http = mock(HttpServletRequest.class);
+    private final Authentication authentication = mock(Authentication.class);
     private final Offer offer = mock(Offer.class);
     private final Model model = mock(Model.class);
     private final BodyType bodyType = mock(BodyType.class);
@@ -54,6 +56,11 @@ class ViewControllerTest {
     private final String registerPath = "register";
     private final String addOfferPath = "add-offer";
 
+    @AfterEach
+    public void clean() {
+        reset(brandService, offerService, http, authentication);
+    }
+
     @Test
     void getIndex() {
         final ArgumentCaptor<Object> argumentCaptor = ArgumentCaptor.forClass(Object.class);
@@ -67,11 +74,18 @@ class ViewControllerTest {
     }
 
     @Test
+    void getRegisterShouldRedirectWhenAuthenticated() {
+        when(authentication.isAuthenticated()).thenReturn(true);
+
+        assertEquals("redirect:/", viewController.getRegister(model, authentication));
+    }
+
+    @Test
     void getRegisterShouldUseNewRegisterBindingModel() {
         final ArgumentCaptor<RegisterBindingModel> argumentCaptor = ArgumentCaptor.forClass(RegisterBindingModel.class);
         when(model.containsAttribute(registerBindingModelAttribute)).thenReturn(false);
 
-        final String result = viewController.getRegister(model);
+        final String result = viewController.getRegister(model, authentication);
 
         verify(model).addAttribute(eq(registerBindingModelAttribute), argumentCaptor.capture());
         final RegisterBindingModel registerBindingModel = argumentCaptor.getValue();
@@ -88,20 +102,43 @@ class ViewControllerTest {
     void getRegisterShouldNotUseNewRegisterBindingModel() {
         when(model.containsAttribute(registerBindingModelAttribute)).thenReturn(true);
 
-        final String result = viewController.getRegister(model);
+        final String result = viewController.getRegister(model, authentication);
 
         verify(model, times(0)).addAttribute(eq(registerBindingModelAttribute), any());
         assertEquals(registerPath, result);
     }
 
     @Test
-    void getLogin() {
-        assertEquals("login", viewController.getLogin(model));
+    void getLoginShouldRedirectWhenAuthenticated() {
+        when(authentication.isAuthenticated()).thenReturn(true);
+        assertEquals("redirect:/", viewController.getLogin(model, authentication));
     }
 
     @Test
-    void getProfile() {
-        assertEquals("profile", viewController.getProfile(model));
+    void getLoginShouldReturnLoginWhenAuthenticationNull() {
+        assertEquals("login", viewController.getLogin(model, null));
+    }
+
+    @Test
+    void getLoginShouldReturnLoginWhenNotAuthenticated() {
+        when(authentication.isAuthenticated()).thenReturn(false);
+        assertEquals("login", viewController.getLogin(model, authentication));
+    }
+
+    @Test
+    void getProfileShouldRedirectWhenAuthenticationNull() {
+        assertEquals("redirect:/login", viewController.getProfile(model, null));
+    }
+
+    @Test
+    void getLoginError() {
+        assertEquals("login", viewController.getLoginError(model));
+        verify(model, times(1)).addAttribute("loginError", true);
+    }
+
+    @Test
+    void getProfileShouldReturnProfile() {
+        assertEquals("profile", viewController.getProfile(model, authentication));
     }
 
     @Test
@@ -170,11 +207,16 @@ class ViewControllerTest {
     }
 
     @Test
+    void getAddOfferShouldRedirectWhenAuthenticationNull() {
+        assertEquals("redirect:/login", viewController.getAddOffer(model, null));
+    }
+
+    @Test
     void getAddOfferShouldUseNewOfferBindingModel() {
         final ArgumentCaptor<OfferBindingModel> argumentCaptor = ArgumentCaptor.forClass(OfferBindingModel.class);
         when(model.containsAttribute(offerBindingModelAttribute)).thenReturn(false);
 
-        final String result = viewController.getAddOffer(model);
+        final String result = viewController.getAddOffer(model, authentication);
 
         verify(model).addAttribute(eq(offerBindingModelAttribute), argumentCaptor.capture());
         final OfferBindingModel registerBindingModel = argumentCaptor.getValue();
@@ -200,19 +242,26 @@ class ViewControllerTest {
     void getAddOfferShouldNotUseNewOfferBindingModel() {
         when(model.containsAttribute(offerBindingModelAttribute)).thenReturn(true);
 
-        final String result = viewController.getAddOffer(model);
+        final String result = viewController.getAddOffer(model, authentication);
 
         verify(model, times(0)).addAttribute(eq(offerBindingModelAttribute), any());
         assertEquals(addOfferPath, result);
     }
 
     @Test
+    void getAddEngineShouldRedirectWhenUserNotAdmin() {
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
+        assertEquals("redirect:/", viewController.getAddEngine(model, http));
+    }
+
+    @Test
     void getAddEngineShouldUseNewEngineBindingModel() {
         final ArgumentCaptor<EngineBindingModel> argumentCaptor = ArgumentCaptor.forClass(EngineBindingModel.class);
         final ArgumentCaptor<Object> fuelTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
         when(model.containsAttribute(engineBindingModelAttribute)).thenReturn(false);
 
-        final String result = viewController.getAddEngine(model);
+        final String result = viewController.getAddEngine(model, http);
 
         verify(model).addAttribute(eq(engineBindingModelAttribute), argumentCaptor.capture());
         verify(model).addAttribute(eq(brandsAttribute), any());
@@ -231,9 +280,10 @@ class ViewControllerTest {
     @Test
     void getAddEngineShouldNotUseNewEngineBindingModel() {
         final ArgumentCaptor<Object> fuelTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
         when(model.containsAttribute(engineBindingModelAttribute)).thenReturn(true);
 
-        final String result = viewController.getAddEngine(model);
+        final String result = viewController.getAddEngine(model, http);
 
         verify(model, times(0)).addAttribute(eq(engineBindingModelAttribute), any());
         verify(model).addAttribute(eq(brandsAttribute), any());
@@ -244,13 +294,19 @@ class ViewControllerTest {
     }
 
     @Test
-    void getMyOffers() {
-        assertEquals("offers", viewController.getMyOffers(model));
+    void getMyOffersShouldRedirectWhenAuthenticationNull() {
+        assertEquals("redirect:/login", viewController.getMyOffers(model, null));
     }
 
     @Test
-    void getAddModel() {
-        assertEquals("add-model", viewController.getAddModel(model));
+    void getMyOffersShouldReturnOffers() {
+        assertEquals("offers", viewController.getMyOffers(model, authentication));
+    }
+
+    @Test
+    void getAddModelShouldRedirectWhenUserNotAdmin() {
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
+        assertEquals("redirect:/", viewController.getAddModel(model, http));
     }
 
     @Test
@@ -259,9 +315,10 @@ class ViewControllerTest {
         final ArgumentCaptor<Object> bodyTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         final ArgumentCaptor<Object> driveTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         final ArgumentCaptor<Object> transmissionTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
         when(model.containsAttribute(modelBindingModelAttribute)).thenReturn(false);
 
-        final String result = viewController.getAddModel(model);
+        final String result = viewController.getAddModel(model, http);
 
         verify(model).addAttribute(eq(modelBindingModelAttribute), argumentCaptor.capture());
         verify(model).addAttribute(eq(brandsAttribute), any());
@@ -291,9 +348,10 @@ class ViewControllerTest {
         final ArgumentCaptor<Object> bodyTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         final ArgumentCaptor<Object> driveTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         final ArgumentCaptor<Object> transmissionTypesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
         when(model.containsAttribute(modelBindingModelAttribute)).thenReturn(true);
 
-        final String result = viewController.getAddModel(model);
+        final String result = viewController.getAddModel(model, http);
 
         verify(model, times(0)).addAttribute(eq(modelBindingModelAttribute), any());
         verify(model).addAttribute(eq(brandsAttribute), any());

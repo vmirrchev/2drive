@@ -1,22 +1,22 @@
 package softuni.exam.drive.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import softuni.exam.drive.model.dto.EngineBindingModel;
 import softuni.exam.drive.model.dto.ModelBindingModel;
 import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
 import softuni.exam.drive.model.entity.Offer;
-import softuni.exam.drive.model.enums.BodyType;
-import softuni.exam.drive.model.enums.DriveType;
-import softuni.exam.drive.model.enums.FuelType;
-import softuni.exam.drive.model.enums.TransmissionType;
+import softuni.exam.drive.model.enums.*;
 import softuni.exam.drive.service.BrandService;
 import softuni.exam.drive.service.OfferService;
 
@@ -42,7 +42,11 @@ public class ViewController {
     }
 
     @GetMapping("/register")
-    public String getRegister(final Model model) {
+    public String getRegister(final Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/";
+        }
+
         if (!model.containsAttribute("registerBindingModel")) {
             model.addAttribute("registerBindingModel", new RegisterBindingModel());
         }
@@ -50,13 +54,27 @@ public class ViewController {
         return "register";
     }
 
-    @GetMapping("/login")
-    public String getLogin(final Model model) {
+    @RequestMapping("/login")
+    public String getLogin(final Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/";
+        }
+
+        return "login";
+    }
+
+    @GetMapping("/login-error")
+    public String getLoginError(final Model model) {
+        model.addAttribute("loginError", true);
         return "login";
     }
 
     @GetMapping("/profile")
-    public String getProfile(final Model model) {
+    public String getProfile(final Model model, Authentication authentication) {
+        if (authentication == null) {
+            return "redirect:/login";
+        }
+
         return "profile";
     }
 
@@ -115,7 +133,11 @@ public class ViewController {
     }
 
     @GetMapping("/add-offer")
-    public String getAddOffer(final Model model) {
+    public String getAddOffer(final Model model, Authentication authentication) {
+        if (authentication == null) {
+            return "redirect:/login";
+        }
+
         if (!model.containsAttribute("offerBindingModel")) {
             model.addAttribute("offerBindingModel", new OfferBindingModel());
         }
@@ -125,7 +147,11 @@ public class ViewController {
     }
 
     @GetMapping("/add-engine")
-    public String getAddEngine(final Model model) {
+    public String getAddEngine(final Model model, HttpServletRequest http) {
+        if (!http.isUserInRole(Role.ROLE_ADMIN.name())) {
+            return "redirect:/";
+        }
+
         if (!model.containsAttribute("engineBindingModel")) {
             model.addAttribute("engineBindingModel", new EngineBindingModel());
         }
@@ -136,12 +162,20 @@ public class ViewController {
     }
 
     @GetMapping("/my-offers")
-    public String getMyOffers(final Model model) {
+    public String getMyOffers(final Model model, Authentication authentication) {
+        if (authentication == null) {
+            return "redirect:/login";
+        }
+
         return "offers";
     }
 
     @GetMapping("/add-model")
-    public String getAddModel(final Model model) {
+    public String getAddModel(final Model model, HttpServletRequest http) {
+        if (!http.isUserInRole(Role.ROLE_ADMIN.name())) {
+            return "redirect:/";
+        }
+
         if (!model.containsAttribute("modelBindingModel")) {
             model.addAttribute("modelBindingModel", new ModelBindingModel());
         }
