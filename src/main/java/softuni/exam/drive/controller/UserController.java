@@ -6,11 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
+import softuni.exam.drive.model.dto.UserBindingModel;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.service.UserService;
 
 import java.text.MessageFormat;
@@ -53,4 +53,34 @@ public class UserController {
         redirectAttributes.addFlashAttribute("addSuccess", true);
         return "redirect:/login";
     }
+
+    @PatchMapping("/{id}")
+    public String updateUser(
+            @PathVariable("id") final Long userId,
+            @Valid @ModelAttribute("userBindingModel") final UserBindingModel userBindingModel,
+            final BindingResult bindingResult,
+            final RedirectAttributes redirectAttributes)
+    {
+        final String redirect = "redirect:/profile";
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userBindingModel", bindingResult);
+            redirectAttributes.addFlashAttribute("userBindingModel", userBindingModel);
+            return "redirect:/edit-profile";
+        }
+
+        try {
+            final User user = userService.getUserById(userId);
+            userService.updateUser(user, userBindingModel);
+        } catch (Exception ex) {
+            LOGGER.error(MessageFormat.format("User update operation failed. {0}", ex.getMessage()));
+            redirectAttributes.addFlashAttribute("userBindingModel", userBindingModel);
+            redirectAttributes.addFlashAttribute("editSuccess", false);
+            return redirect;
+        }
+
+        redirectAttributes.addFlashAttribute("editSuccess", true);
+        return redirect;
+    }
+
 }

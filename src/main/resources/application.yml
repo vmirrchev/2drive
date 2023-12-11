@@ -5,11 +5,15 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: 'TRUE'
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
     password: '${DB_PASSWORD}'
     username: '${DB_USERNAME}'
     url: jdbc:postgresql://localhost:8080/2drive
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 
 server:
   port: 8081

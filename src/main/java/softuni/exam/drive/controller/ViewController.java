@@ -11,15 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import softuni.exam.drive.model.dto.EngineBindingModel;
-import softuni.exam.drive.model.dto.ModelBindingModel;
-import softuni.exam.drive.model.dto.OfferBindingModel;
-import softuni.exam.drive.model.dto.RegisterBindingModel;
+import softuni.exam.drive.model.dto.*;
 import softuni.exam.drive.model.entity.Offer;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.*;
 import softuni.exam.drive.service.BrandService;
 import softuni.exam.drive.service.OfferService;
+import softuni.exam.drive.service.UserService;
 
 import java.text.MessageFormat;
 
@@ -34,6 +32,7 @@ public class ViewController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ViewController.class);
     private final BrandService brandService;
     private final OfferService offerService;
+    private final UserService userService;
 
     @GetMapping("/")
     public String getIndex(final Model model) {
@@ -77,13 +76,37 @@ public class ViewController {
         }
 
         final User user = (User) authentication.getPrincipal();
-        model.addAttribute("username", user.getUsername());
-        model.addAttribute("firstName", user.getFirstName());
-        model.addAttribute("lastName", user.getLastName());
-        model.addAttribute("email", user.getEmail());
-        model.addAttribute("phoneNumber", user.getPhoneNumber());
+        final User dbUser = userService.getUserById(user.getId());
+        model.addAttribute("username", dbUser.getUsername());
+        model.addAttribute("firstName", dbUser.getFirstName());
+        model.addAttribute("lastName", dbUser.getLastName());
+        model.addAttribute("email", dbUser.getEmail());
+        model.addAttribute("phoneNumber", dbUser.getPhoneNumber());
 
         return "profile";
+    }
+
+    @GetMapping("/edit-profile")
+    public String getEditProfile(final Model model, Authentication authentication) {
+        if (authentication == null) {
+            return "redirect:/login";
+        }
+
+        final User user = (User) authentication.getPrincipal();
+        final User dbUser = userService.getUserById(user.getId());
+        model.addAttribute("userId", user.getId());
+
+        if (!model.containsAttribute("userBindingModel")) {
+            final UserBindingModel userBindingModel = new UserBindingModel();
+            userBindingModel.setUsername(dbUser.getUsername());
+            userBindingModel.setFirstName(dbUser.getFirstName());
+            userBindingModel.setLastName(dbUser.getLastName());
+            userBindingModel.setEmail(dbUser.getEmail());
+            userBindingModel.setPhoneNumber(dbUser.getPhoneNumber());
+            model.addAttribute("userBindingModel", userBindingModel);
+        }
+
+        return "edit-profile";
     }
 
     @GetMapping("/about-us")

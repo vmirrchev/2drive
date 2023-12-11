@@ -9,15 +9,13 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
-import softuni.exam.drive.model.dto.EngineBindingModel;
-import softuni.exam.drive.model.dto.ModelBindingModel;
-import softuni.exam.drive.model.dto.OfferBindingModel;
-import softuni.exam.drive.model.dto.RegisterBindingModel;
+import softuni.exam.drive.model.dto.*;
 import softuni.exam.drive.model.entity.Offer;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.*;
 import softuni.exam.drive.service.BrandService;
 import softuni.exam.drive.service.OfferService;
+import softuni.exam.drive.service.UserService;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -34,16 +32,20 @@ class ViewControllerTest {
 
     private final BrandService brandService = mock(BrandService.class);
     private final OfferService offerService = mock(OfferService.class);
-    private final ViewController viewController = new ViewController(brandService, offerService);
+    private final UserService userService = mock(UserService.class);
+    private final ViewController viewController = new ViewController(brandService, offerService, userService);
     private final HttpServletRequest http = mock(HttpServletRequest.class);
     private final Authentication authentication = mock(Authentication.class);
     private final Offer offer = mock(Offer.class);
     private final Model model = mock(Model.class);
     private final BodyType bodyType = mock(BodyType.class);
+    final User user = mock(User.class);
+    final User dbUser = mock(User.class);
     private final String engineBindingModelAttribute = "engineBindingModel";
     private final String modelBindingModelAttribute = "modelBindingModel";
     private final String registerBindingModelAttribute = "registerBindingModel";
     private final String offerBindingModelAttribute = "offerBindingModel";
+    private final String userBindingModelAttribute = "userBindingModel";
     private final String brandsAttribute = "brands";
     private final String offersAttribute = "offers";
     private final String offerAttribute = "offer";
@@ -51,7 +53,9 @@ class ViewControllerTest {
     private final String bodyTypesAttribute = "bodyTypes";
     private final String driveTypesAttribute = "driveTypes";
     private final String transmissionTypesAttribute = "transmissionTypes";
+    private final String userIdAttribute = "userId";
     private final Long offerId = 1L;
+    private final Long userId = 1L;
     private final String addEnginePath = "add-engine";
     private final String addModelPath = "add-model";
     private final String registerPath = "register";
@@ -62,6 +66,7 @@ class ViewControllerTest {
     private final String offerPath = "offer";
     private final String redirectIndexPath = "redirect:/";
     private final String redirectLoginPath = "redirect:/login";
+    private final String editProfilePath = "edit-profile";
 
     @AfterEach
     public void clean() {
@@ -147,16 +152,74 @@ class ViewControllerTest {
     void getProfileShouldReturnProfile() {
         final User user = mock(User.class);
         when(authentication.getPrincipal()).thenReturn(user);
+        when(user.getId()).thenReturn(userId);
+        when(userService.getUserById(userId)).thenReturn(dbUser);
 
         final String result = viewController.getProfile(model, authentication);
 
         verify(authentication, times(1)).getPrincipal();
-        verify(model, times(1)).addAttribute("username", user.getUsername());
-        verify(model, times(1)).addAttribute("firstName", user.getFirstName());
-        verify(model, times(1)).addAttribute("lastName", user.getLastName());
-        verify(model, times(1)).addAttribute("email", user.getEmail());
-        verify(model, times(1)).addAttribute("phoneNumber", user.getPhoneNumber());
+        verify(model, times(1)).addAttribute("username", dbUser.getUsername());
+        verify(model, times(1)).addAttribute("firstName", dbUser.getFirstName());
+        verify(model, times(1)).addAttribute("lastName", dbUser.getLastName());
+        verify(model, times(1)).addAttribute("email", dbUser.getEmail());
+        verify(model, times(1)).addAttribute("phoneNumber", dbUser.getPhoneNumber());
         assertEquals(profilePath, result);
+    }
+
+    @Test
+    void getEditProfileShouldRedirectWhenAuthenticationNull() {
+        assertEquals(redirectLoginPath, viewController.getEditProfile(model, null));
+    }
+
+    @Test
+    void getEditProfileShouldUseNewUserBindingModel() {
+        ArgumentCaptor<UserBindingModel> argumentCaptor = ArgumentCaptor.forClass(UserBindingModel.class);
+        final String username = "john_doe";
+        final String firstName = "John";
+        final String lastName = "Doe";
+        final String email = "john_doe87@yahoo.com";
+        final String phoneNumber = "0888908070";
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(user.getId()).thenReturn(userId);
+        when(userService.getUserById(userId)).thenReturn(dbUser);
+        when(model.containsAttribute(eq(userBindingModelAttribute))).thenReturn(false);
+        when(dbUser.getUsername()).thenReturn(username);
+        when(dbUser.getFirstName()).thenReturn(firstName);
+        when(dbUser.getLastName()).thenReturn(lastName);
+        when(dbUser.getEmail()).thenReturn(email);
+        when(dbUser.getPhoneNumber()).thenReturn(phoneNumber);
+
+        final String result = viewController.getEditProfile(model, authentication);
+
+        verify(authentication, times(1)).getPrincipal();
+        verify(userService, times(1)).getUserById(userId);
+        verify(model, times(1)).addAttribute(eq(userIdAttribute), eq(userId));
+        verify(model, times(1)).addAttribute(eq(userBindingModelAttribute), argumentCaptor.capture());
+        final UserBindingModel userBindingModel = argumentCaptor.getValue();
+        assertEquals(username, userBindingModel.getUsername());
+        assertEquals(firstName, userBindingModel.getFirstName());
+        assertEquals(lastName, userBindingModel.getLastName());
+        assertEquals(email, userBindingModel.getEmail());
+        assertEquals(phoneNumber, userBindingModel.getPhoneNumber());
+        assertEquals(editProfilePath, result);
+    }
+
+    @Test
+    void getEditProfileShouldNotUseNewUserBindingModel() {
+        final User user = mock(User.class);
+        final User dbUser = mock(User.class);
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(user.getId()).thenReturn(userId);
+        when(userService.getUserById(userId)).thenReturn(dbUser);
+        when(model.containsAttribute(eq(userBindingModelAttribute))).thenReturn(true);
+
+        final String result = viewController.getEditProfile(model, authentication);
+
+        verify(authentication, times(1)).getPrincipal();
+        verify(userService, times(1)).getUserById(userId);
+        verify(model, times(1)).addAttribute(eq(userIdAttribute), eq(userId));
+        verify(model, times(0)).addAttribute(eq(userBindingModelAttribute), any());
+        assertEquals(editProfilePath, result);
     }
 
     @Test

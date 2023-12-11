@@ -1,0 +1,20 @@
+.profile-details form {
+    display: flex;
+    flex-direction: column;
+    max-width: 350px;
+    margin: 0;
+}
+
+.profile-details div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-details input {
+    margin: 0;
+}
+
+.profile-details button {
+    width: max-content;
+}

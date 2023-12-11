@@ -7,6 +7,8 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
+import softuni.exam.drive.model.dto.UserBindingModel;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.service.UserService;
 
 import java.text.MessageFormat;
@@ -24,10 +26,16 @@ class UserControllerTest {
     private final UserService userService = mock(UserService.class);
     private final UserController userController = new UserController(userService);
     private final RegisterBindingModel registerBindingModel = mock(RegisterBindingModel.class);
+    private final User user = mock(User.class);
+    private final UserBindingModel userBindingModel = mock(UserBindingModel.class);
     private final BindingResult bindingResult = mock(BindingResult.class);
     private final RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
     private final String redirectRegisterUrl = "redirect:/register";
     private final String redirectLoginUrl = "redirect:/login";
+    private final String redirectProfileUrl = "redirect:/profile";
+    private final String redirectEditProfileUrl = "redirect:/edit-profile";
+    private final String exceptionMessage = "message";
+    private final Long userId = 1L;
 
     @Test
     void createUserShouldAddNewUser(CapturedOutput capturedOutput) {
@@ -56,7 +64,6 @@ class UserControllerTest {
 
     @Test
     void createUserShouldHandleExceptions(CapturedOutput capturedOutput) {
-        final String exceptionMessage = "message";
         when(bindingResult.hasErrors()).thenReturn(false);
         doThrow(new RuntimeException(exceptionMessage)).when(userService).createUser(registerBindingModel);
 
@@ -67,5 +74,48 @@ class UserControllerTest {
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", false);
         assertThat(capturedOutput.getOut()).contains(MessageFormat.format("User creation operation failed. {0}", exceptionMessage));
         assertEquals(redirectRegisterUrl, result);
+    }
+
+    @Test
+    void updateUserShouldUpdateUserData(CapturedOutput capturedOutput) {
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(userService.getUserById(userId)).thenReturn(user);
+
+        final String result = userController.updateUser(userId, userBindingModel, bindingResult, redirectAttributes);
+
+        verify(userService, times(1)).updateUser(user, userBindingModel);
+        verify(userService, times(1)).getUserById(userId);
+        verify(userService, times(1)).updateUser(user, userBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute("editSuccess", true);
+        assertEquals("", capturedOutput.getOut());
+        assertEquals(redirectProfileUrl, result);
+    }
+
+    @Test
+    void updateUserShouldHandleErrors(CapturedOutput capturedOutput) {
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        final String result = userController.updateUser(userId, userBindingModel, bindingResult, redirectAttributes);
+
+        verify(userService, times(0)).updateUser(user, userBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute("org.springframework.validation.BindingResult.userBindingModel", bindingResult);
+        verify(redirectAttributes, times(1)).addFlashAttribute("userBindingModel", userBindingModel);
+        assertEquals("", capturedOutput.getOut());
+        assertEquals(redirectEditProfileUrl, result);
+    }
+
+    @Test
+    void updateUserShouldHandleExceptions(CapturedOutput capturedOutput) {
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(userService.getUserById(userId)).thenReturn(user);
+        doThrow(new RuntimeException(exceptionMessage)).when(userService).updateUser(user, userBindingModel);
+
+        final String result = userController.updateUser(userId, userBindingModel, bindingResult, redirectAttributes);
+
+        verify(userService, times(1)).updateUser(user, userBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute("userBindingModel", userBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute("editSuccess", false);
+        assertThat(capturedOutput.getOut()).contains(MessageFormat.format("User update operation failed. {0}", exceptionMessage));
+        assertEquals(redirectProfileUrl, result);
     }
 }

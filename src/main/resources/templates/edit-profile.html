@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert="~{fragments/commons::head}"></th:block>
+    <link rel="stylesheet" href="/css/profile.css"/>
+    <link rel="stylesheet" href="/css/edit-profile.css"/>
+</head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>Profile</h2>
+        </section>
+
+        <section id="profile">
+            <div class="profile-image">
+                <img th:src="@{/img/user.png}"/>
+            </div>
+            <div class="profile-details">
+                <h2>Profile details</h2>
+                <form th:method="PATCH" th:action="@{/api/v1/users/{id}(id=${userId})}" th:object="${userBindingModel}">
+                    <ul>
+                        <p class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+                        <li>
+                            <div>
+                                <p>Username: </p>
+                                <input type="text" name="username" th:value="${userBindingModel.username}">
+                            </div>
+                        </li>
+                        <p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+                        <li>
+                            <div>
+                                <p>First name: </p>
+                                <input type="text" name="firstName" th:value="${userBindingModel.firstName}">
+                            </div>
+                        </li>
+                        <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+                        <li>
+                            <div>
+                                <p>Last name: </p>
+                                <input type="text" name="lastName" th:value="${userBindingModel.lastName}">
+                            </div>
+                        </li>
+                        <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                        <li>
+                            <div>
+                                <p>Email: </p>
+                                <input type="text" name="email" th:value="${userBindingModel.email}">
+                            </div>
+                        </li>
+                        <p class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p>
+                        <li>
+                            <div>
+                                <p>Phone number: </p>
+                                <input type="text" name="phoneNumber" th:value="${userBindingModel.phoneNumber}">
+                            </div>
+                        </li>
+                    </ul>
+                    <button type="submit">Save profile</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

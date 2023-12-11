@@ -18,6 +18,8 @@
             <div class="profile-image">
                 <img th:src="@{/img/user.png}"/>
             </div>
+            <p class="text-success" th:if="${editSuccess == true}">User updated successfully</p>
+            <p class="text-danger" th:if="${editSuccess == false}">User could not be updated. Please try again or contact administrator</p>
             <div class="profile-details">
                 <h2>Profile details</h2>
                 <ul>
@@ -25,8 +27,9 @@
                     <li th:text="'First name: ' + ${firstName}">First name: John</li>
                     <li th:text="'Last name: ' + ${lastName}">Last name: Doe</li>
                     <li th:text="'Email: ' + ${email}">Email: john-doe@yahoo.com</li>
-                    <li th:text="'Phone number: ' + ${email}">Phone number: 0888204060</li>
+                    <li th:text="'Phone number: ' + ${phoneNumber}">Phone number: 0888204060</li>
                 </ul>
+                <a class="cta-button" th:href="@{/edit-profile}">Edit profile</a>
             </div>
         </section>
     </main>
