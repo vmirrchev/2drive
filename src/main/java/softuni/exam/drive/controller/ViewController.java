@@ -217,4 +217,32 @@ public class ViewController {
 
         return "add-model";
     }
+
+    @GetMapping("/roles")
+    public String getUserRoles(final Model model, HttpServletRequest http) {
+        if (!http.isUserInRole(Role.ROLE_ADMIN.name())) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("users", userService.getAllUsers());
+
+        return "roles";
+    }
+
+    @GetMapping("/edit-role/{id}")
+    public String getEditUserRoles(@PathVariable("id") final Long userId, final Model model, HttpServletRequest http) {
+        if (!http.isUserInRole(Role.ROLE_ADMIN.name())) {
+            return "redirect:/";
+        }
+
+        if (!model.containsAttribute("roleBindingModel")) {
+            model.addAttribute("roleBindingModel", new RoleBindingModel());
+        }
+
+        final User user = userService.getUserById(userId);
+        model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values());
+
+        return "edit-role";
+    }
 }

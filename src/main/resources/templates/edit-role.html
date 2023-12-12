@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert="~{fragments/commons::head}"></th:block>
+    <link rel="stylesheet" href="/css/edit-role.css"/>
+</head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>Role management</h2>
+        </section>
+
+        <section id="role">
+            <form th:method="PATCH" th:action="@{/api/v1/users/{id}/role(id=${user.id})}" th:object="${roleBindingModel}">
+                <p class="text-danger" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></p>
+                <div class="head">
+                    <p>Username</p>
+                    <p>Role</p>
+                </div>
+                <div>
+                    <p th:text="${user.username}">john_doe</p>
+                    <select name="role">
+                        <option th:each="role:${roles}" th:value="${role}" th:text="${role.text()}" th:selected="${role==user.role}"></option>
+                    </select>
+                </div>
+                <button type="submit">Save role</button>
+            </form>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

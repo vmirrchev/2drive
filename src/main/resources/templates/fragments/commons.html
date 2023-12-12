@@ -22,6 +22,7 @@
                 <li sec:authorize="isAuthenticated()"><a th:href="@{/my-offers}">My offers</a></li>
                 <li sec:authorize="isAuthenticated() and hasRole('ADMIN')"><a th:href="@{/add-engine}">Add engine</a></li>
                 <li sec:authorize="isAuthenticated() and hasRole('ADMIN')"><a th:href="@{/add-model}">Add model</a></li>
+                <li sec:authorize="isAuthenticated() and hasRole('ADMIN')"><a th:href="@{/roles}">Role management</a></li>
                 <li sec:authorize="isAnonymous()"><a th:href="@{/login}">Login</a></li>
                 <li sec:authorize="isAnonymous()"><a th:href="@{/register}">Register</a></li>
                 <li sec:authorize="isAuthenticated()"><a th:href="@{/profile}">Profile</a></li>

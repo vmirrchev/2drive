@@ -72,3 +72,7 @@ select {
 .offers-message {
     text-align: center;
 }
+
+#title {
+    border-bottom: 1px solid lightgrey;
+}

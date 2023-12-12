@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert="~{fragments/commons::head}"></th:block>
+    <link rel="stylesheet" href="/css/roles.css"/>
+</head>
+
+<body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="title">
+            <h2>Role management</h2>
+        </section>
+
+        <section id="roles">
+            <div class="roles-container">
+                <p class="text-success" th:if="${editSuccess == true}">User role updated successfully</p>
+                <p class="text-danger" th:if="${editSuccess == false}">User role could not be updated. Please try again or contact administrator</p>
+                <div class="head">
+                    <p>Username</p>
+                    <p>Role</p>
+                </div>
+                <div th:each="user:${users}">
+                    <p th:text="${user.username}">john_doe</p>
+                    <p th:text="${user.role.text()}">user</p>
+                    <a class="cta-button" th:href="@{/edit-role/{id}(id=${user.id})}">Edit role</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+</body>
+
+</html>

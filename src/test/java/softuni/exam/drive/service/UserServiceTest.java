@@ -7,12 +7,14 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
+import softuni.exam.drive.model.dto.RoleBindingModel;
 import softuni.exam.drive.model.dto.UserBindingModel;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.Role;
 import softuni.exam.drive.repository.UserRepository;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +32,7 @@ class UserServiceTest {
     private final UserService userService = new UserService(userRepository, passwordEncoder);
     private final RegisterBindingModel registerBindingModel = mock(RegisterBindingModel.class);
     private final UserBindingModel userBindingModel = mock(UserBindingModel.class);
+    private final RoleBindingModel roleBindingModel = mock(RoleBindingModel.class);
     private final User user = mock(User.class);
     private final String username = "user";
     private final String firstName = "John";
@@ -155,6 +158,7 @@ class UserServiceTest {
         verify(user, times(1)).setLastName(lastName);
         verify(user, times(1)).setEmail(email);
         verify(user, times(1)).setPhoneNumber(phoneNumber);
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
@@ -169,6 +173,7 @@ class UserServiceTest {
         verify(user, times(0)).setLastName(lastName);
         verify(user, times(0)).setEmail(email);
         verify(user, times(0)).setPhoneNumber(phoneNumber);
+        verify(userRepository, times(0)).save(user);
         assertEquals(exceptionMessage, thrown.getMessage());
     }
 
@@ -184,6 +189,7 @@ class UserServiceTest {
         verify(user, times(0)).setLastName(lastName);
         verify(user, times(0)).setEmail(email);
         verify(user, times(0)).setPhoneNumber(phoneNumber);
+        verify(userRepository, times(0)).save(user);
         assertEquals(exceptionMessage, thrown.getMessage());
     }
 
@@ -199,6 +205,7 @@ class UserServiceTest {
         verify(user, times(0)).setLastName(lastName);
         verify(user, times(0)).setEmail(email);
         verify(user, times(0)).setPhoneNumber(phoneNumber);
+        verify(userRepository, times(0)).save(user);
         assertEquals(exceptionMessage, thrown.getMessage());
     }
 
@@ -214,6 +221,7 @@ class UserServiceTest {
         verify(user, times(0)).setLastName(lastName);
         verify(user, times(0)).setEmail(email);
         verify(user, times(0)).setPhoneNumber(phoneNumber);
+        verify(userRepository, times(0)).save(user);
         assertEquals(exceptionMessage, thrown.getMessage());
     }
 
@@ -243,5 +251,21 @@ class UserServiceTest {
 
         assertEquals(thrown.getMessage(), exceptionMessage);
         verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    void updateUser() {
+        userService.updateUser(user, roleBindingModel);
+
+        verify(user).setRole(roleBindingModel.getRole());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void getAllUsers() {
+        final List<User> users = List.of(user);
+        when(userRepository.findAll()).thenReturn(users);
+
+        assertEquals(users, userService.getAllUsers());
     }
 }

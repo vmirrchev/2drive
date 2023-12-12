@@ -1,0 +1,19 @@
+.roles-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.roles-container div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.roles-container div p {
+    width: 33.3%;
+}
+
+.head p {
+    font-weight: 600;
+}

@@ -46,6 +46,7 @@ class ViewControllerTest {
     private final String registerBindingModelAttribute = "registerBindingModel";
     private final String offerBindingModelAttribute = "offerBindingModel";
     private final String userBindingModelAttribute = "userBindingModel";
+    private final String roleBindingModelAttribute = "roleBindingModel";
     private final String brandsAttribute = "brands";
     private final String offersAttribute = "offers";
     private final String offerAttribute = "offer";
@@ -54,6 +55,8 @@ class ViewControllerTest {
     private final String driveTypesAttribute = "driveTypes";
     private final String transmissionTypesAttribute = "transmissionTypes";
     private final String userIdAttribute = "userId";
+    private final String userAttribute = "user";
+    private final String rolesAttribute = "roles";
     private final Long offerId = 1L;
     private final Long userId = 1L;
     private final String addEnginePath = "add-engine";
@@ -67,6 +70,7 @@ class ViewControllerTest {
     private final String redirectIndexPath = "redirect:/";
     private final String redirectLoginPath = "redirect:/login";
     private final String editProfilePath = "edit-profile";
+    private final String editRolePath = "edit-role";
 
     @AfterEach
     public void clean() {
@@ -446,5 +450,66 @@ class ViewControllerTest {
         final TransmissionType[] transmissionTypes = (TransmissionType[]) transmissionTypesArgumentCaptor.getValue();
         assertThat(transmissionTypes).containsAll(Arrays.asList(TransmissionType.values()));
         assertEquals(addModelPath, result);
+    }
+
+    @Test
+    void getUserRolesShouldRedirectWhenUserNotAdmin() {
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
+        assertEquals(redirectIndexPath, viewController.getUserRoles(model, http));
+    }
+
+    @Test
+    void getUserRolesShouldReturnRoles() {
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
+
+        assertEquals("roles", viewController.getUserRoles(model, http));
+        verify(model, times(1)).addAttribute("users", userService.getAllUsers());
+    }
+
+    @Test
+    void getEditUserRolesShouldRedirectWhenUserNotAdmin() {
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
+        assertEquals(redirectIndexPath, viewController.getEditUserRoles(userId, model, http));
+    }
+
+    @Test
+    void getEditUserRolesShouldUseNewModelBindingModel() {
+        final ArgumentCaptor<RoleBindingModel> argumentCaptor = ArgumentCaptor.forClass(RoleBindingModel.class);
+        final ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        final ArgumentCaptor<Object> rolesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
+        when(model.containsAttribute(roleBindingModelAttribute)).thenReturn(false);
+        when(userService.getUserById(userId)).thenReturn(user);
+
+        final String result = viewController.getEditUserRoles(userId, model, http);
+
+        verify(userService, times(1)).getUserById(userId);
+        verify(model).addAttribute(eq(roleBindingModelAttribute), argumentCaptor.capture());
+        verify(model).addAttribute(eq(userAttribute), userArgumentCaptor.capture());
+        verify(model).addAttribute(eq(rolesAttribute), rolesArgumentCaptor.capture());
+        final RoleBindingModel roleBindingModel = argumentCaptor.getValue();
+        assertNull(roleBindingModel.getRole());
+        final Role[] roles = (Role[]) rolesArgumentCaptor.getValue();
+        assertThat(roles).containsAll(Arrays.asList(Role.values()));
+        assertEquals(editRolePath, result);
+    }
+
+    @Test
+    void getEditUserRolesShouldNotUseNewModelBindingModel() {
+        final ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        final ArgumentCaptor<Object> rolesArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
+        when(model.containsAttribute(roleBindingModelAttribute)).thenReturn(true);
+        when(userService.getUserById(userId)).thenReturn(user);
+
+        final String result = viewController.getEditUserRoles(userId, model, http);
+
+        verify(userService, times(1)).getUserById(userId);
+        verify(model, times(0)).addAttribute(eq(roleBindingModelAttribute), any());
+        verify(model).addAttribute(eq(userAttribute), userArgumentCaptor.capture());
+        verify(model).addAttribute(eq(rolesAttribute), rolesArgumentCaptor.capture());
+        final Role[] roles = (Role[]) rolesArgumentCaptor.getValue();
+        assertThat(roles).containsAll(Arrays.asList(Role.values()));
+        assertEquals(editRolePath, result);
     }
 }

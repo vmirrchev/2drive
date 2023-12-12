@@ -1,0 +1,19 @@
+#role div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid lightgrey;
+}
+
+#role div p,
+#role div select {
+    width: 50%;
+}
+
+#role button {
+    width: max-content;
+}
+
+.head p {
+    font-weight: 600;
+}

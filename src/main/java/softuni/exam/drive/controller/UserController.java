@@ -4,11 +4,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
+import softuni.exam.drive.model.dto.RoleBindingModel;
 import softuni.exam.drive.model.dto.UserBindingModel;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.service.UserService;
@@ -75,6 +77,35 @@ public class UserController {
         } catch (Exception ex) {
             LOGGER.error(MessageFormat.format("User update operation failed. {0}", ex.getMessage()));
             redirectAttributes.addFlashAttribute("userBindingModel", userBindingModel);
+            redirectAttributes.addFlashAttribute("editSuccess", false);
+            return redirect;
+        }
+
+        redirectAttributes.addFlashAttribute("editSuccess", true);
+        return redirect;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}/role")
+    public String updateUserRole(
+            @PathVariable("id") final Long userId,
+            @Valid @ModelAttribute("roleBindingModel") final RoleBindingModel roleBindingModel,
+            final BindingResult bindingResult,
+            final RedirectAttributes redirectAttributes)
+    {
+        final String redirect = "redirect:/roles";
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.roleBindingModel", bindingResult);
+            redirectAttributes.addFlashAttribute("roleBindingModel", roleBindingModel);
+            return "redirect:/edit-role/" + userId;
+        }
+
+        try {
+            final User user = userService.getUserById(userId);
+            userService.updateUser(user, roleBindingModel);
+        } catch (Exception ex) {
+            LOGGER.error(MessageFormat.format("User role update operation failed. {0}", ex.getMessage()));
             redirectAttributes.addFlashAttribute("editSuccess", false);
             return redirect;
         }
