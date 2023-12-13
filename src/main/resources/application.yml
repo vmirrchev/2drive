@@ -9,7 +9,7 @@ spring:
   datasource:
     password: '${DB_PASSWORD}'
     username: '${DB_USERNAME}'
-    url: jdbc:postgresql://localhost:8080/2drive
+    url: '${DB_URL}'
   mvc:
     hiddenmethod:
       filter:
