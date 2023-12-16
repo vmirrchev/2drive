@@ -47,8 +47,8 @@
           <div class="seller-details">
             <h3>Seller info</h3>
             <ul>
-              <li>Name: Jon Doe</li>
-              <li>Phone number: 0888404040</li>
+              <li th:text="'Name: ' + ${offer.addedBy.firstName} + ' ' + ${offer.addedBy.lastName}">Name: Jon Doe</li>
+              <li th:text="'Phone number: ' + ${offer.addedBy.phoneNumber}">Phone number: 0888404040</li>
             </ul>
           </div>
         </div>
