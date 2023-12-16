@@ -2,6 +2,7 @@ package softuni.exam.drive.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -9,12 +10,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.ModelBindingModel;
+import softuni.exam.drive.model.dto.ModelDTO;
 import softuni.exam.drive.model.entity.Model;
 import softuni.exam.drive.service.ModelService;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller responsible for handling model interactions
@@ -27,12 +30,14 @@ public class ModelController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EngineController.class);
     private final ModelService modelService;
+    private final ModelMapper modelMapper;
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Model getModel(@PathVariable("id") final Long modelId) {
+    public ModelDTO getModel(@PathVariable("id") final Long modelId) {
         try {
-            return modelService.getModelById(modelId);
+            final Model model = modelService.getModelById(modelId);
+            return modelMapper.map(model, ModelDTO.class);
         } catch (Exception ex) {
             LOGGER.error(MessageFormat.format("Model retrieval operation failed. {0}", ex.getMessage()));
             return null;
@@ -41,9 +46,12 @@ public class ModelController {
 
     @GetMapping("/filter")
     @ResponseBody
-    public List<Model> getModelsByBrand(@RequestParam final Long brandId) {
+    public List<ModelDTO> getModelsByBrand(@RequestParam final Long brandId) {
         try {
-            return modelService.getAllModelsByBrandId(brandId);
+            final List<Model> models = modelService.getAllModelsByBrandId(brandId);
+            return models.stream()
+                    .map(model -> modelMapper.map(model, ModelDTO.class))
+                    .collect(Collectors.toList());
         } catch (Exception ex) {
             LOGGER.error(MessageFormat.format("Models retrieval operation failed. {0}", ex.getMessage()));
             return new ArrayList<>();

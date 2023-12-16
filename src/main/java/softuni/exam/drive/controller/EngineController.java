@@ -2,6 +2,7 @@ package softuni.exam.drive.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -9,12 +10,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.EngineBindingModel;
+import softuni.exam.drive.model.dto.EngineDTO;
 import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.service.EngineService;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller responsible for handling offer interactions
@@ -27,13 +30,17 @@ public class EngineController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EngineController.class);
     private final EngineService engineService;
+    private final ModelMapper modelMapper;
 
 
     @GetMapping("/filter")
     @ResponseBody
-    public List<Engine> getEnginesByBrand(@RequestParam final Long brandId) {
+    public List<EngineDTO> getEnginesByBrand(@RequestParam final Long brandId) {
         try {
-            return engineService.getAllEnginesByBrandId(brandId);
+            final List<Engine> engines = engineService.getAllEnginesByBrandId(brandId);
+            return engines.stream()
+                    .map(e -> modelMapper.map(e, EngineDTO.class))
+                    .collect(Collectors.toList());
         } catch (Exception ex) {
             LOGGER.error(MessageFormat.format("Engine retrieval operation failed. {0}", ex.getMessage()));
             return new ArrayList<>();

@@ -1,17 +1,27 @@
 package softuni.exam.drive.controller;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.ModelBindingModel;
+import softuni.exam.drive.model.dto.ModelDTO;
+import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.model.entity.Model;
+import softuni.exam.drive.model.enums.BodyType;
+import softuni.exam.drive.model.enums.DriveType;
+import softuni.exam.drive.model.enums.TransmissionType;
 import softuni.exam.drive.service.ModelService;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,11 +30,13 @@ import static org.mockito.Mockito.*;
 /**
  * @author Vasil Mirchev
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(OutputCaptureExtension.class)
 class ModelControllerTest {
 
     private final ModelService modelService = mock(ModelService.class);
-    private final ModelController modelController = new ModelController(modelService);
+    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelController modelController = new ModelController(modelService, modelMapper);
     private final ModelBindingModel modelBindingModel = mock(ModelBindingModel.class);
     private final BindingResult bindingResult = mock(BindingResult.class);
     private final RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
@@ -33,6 +45,23 @@ class ModelControllerTest {
     private final Long brandId = 1L;
     private final String exceptionMessage = "message";
     private final String redirectUrl = "redirect:/add-model";
+
+    @BeforeAll
+    public void setUp() {
+        when(model.getId()).thenReturn(modelId);
+        when(model.getName()).thenReturn("3 series");
+        when(model.getStartYear()).thenReturn(1998);
+        when(model.getEndYear()).thenReturn(2004);
+        when(model.getBodyTypes()).thenReturn(List.of(BodyType.SEDAN, BodyType.COUPE, BodyType.WAGON, BodyType.CONVERTIBLE));
+        when(model.getDriveTypes()).thenReturn(List.of(DriveType.RWD, DriveType.AWD));
+        when(model.getTransmissionTypes()).thenReturn(List.of(TransmissionType.MANUAL, TransmissionType.AUTOMATIC));
+        when(model.getEngines()).thenReturn(Set.of(mock(Engine.class)));
+    }
+
+    @AfterEach
+    public void clean() {
+        reset(modelService, redirectAttributes);
+    }
 
     @Test
     void createModelShouldAddNewModel(CapturedOutput capturedOutput) {
@@ -78,9 +107,16 @@ class ModelControllerTest {
     void getModelShouldReturnModel() {
         when(modelService.getModelById(modelId)).thenReturn(model);
 
-        final Model result = modelController.getModel(modelId);
+        final ModelDTO result = modelController.getModel(modelId);
 
-        assertEquals(model, result);
+        assertEquals(model.getId(), result.getId());
+        assertEquals(model.getName(), result.getName());
+        assertEquals(model.getStartYear(), result.getStartYear());
+        assertEquals(model.getEndYear(), result.getEndYear());
+        assertEquals(model.getBodyTypes(), result.getBodyTypes());
+        assertEquals(model.getDriveTypes(), result.getDriveTypes());
+        assertEquals(model.getTransmissionTypes(), result.getTransmissionTypes());
+        assertEquals(model.getEngines(), result.getEngines());
         verify(modelService, times(1)).getModelById(modelId);
     }
 
@@ -88,7 +124,7 @@ class ModelControllerTest {
     void getModelShouldReturnModel(CapturedOutput capturedOutput) {
         doThrow(new RuntimeException(exceptionMessage)).when(modelService).getModelById(modelId);
 
-        final Model result = modelController.getModel(modelId);
+        final ModelDTO result = modelController.getModel(modelId);
 
         assertNull(result);
         verify(modelService, times(1)).getModelById(modelId);
@@ -100,9 +136,9 @@ class ModelControllerTest {
         final List<Model> models = List.of(model);
         when(modelService.getAllModelsByBrandId(brandId)).thenReturn(models);
 
-        final List<Model> result = modelController.getModelsByBrand(brandId);
+        final List<ModelDTO> result = modelController.getModelsByBrand(brandId);
 
-        assertEquals(models, result);
+        assertEquals(models.size(), result.size());
         verify(modelService, times(1)).getAllModelsByBrandId(brandId);
     }
 
@@ -110,7 +146,7 @@ class ModelControllerTest {
     void getModelsByBrandShouldReturnEmptyListWhenBrandIdInvalid(CapturedOutput capturedOutput) {
         doThrow(new RuntimeException(exceptionMessage)).when(modelService).getAllModelsByBrandId(brandId);
 
-        final List<Model> result = modelController.getModelsByBrand(brandId);
+        final List<ModelDTO> result = modelController.getModelsByBrand(brandId);
 
         assertThat(result).isEmpty();
         verify(modelService, times(1)).getAllModelsByBrandId(brandId);
