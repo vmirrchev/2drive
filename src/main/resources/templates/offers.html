@@ -15,6 +15,8 @@
         </section>
 
         <section id="offers">
+            <p class="text-success" th:if="${deleteSuccess == true}">Offer deleted successfully</p>
+            <p class="text-danger" th:if="${deleteSuccess == false}">Offer could not be deleted. Please try again or contact administrator</p>
             <p class="offers-message" th:if="${offers.size() == 0}">Oops! It seems the offers you're looking for aren't available.</p>
             <div class="offer" th:each="offer:${offers}">
                 <div class="offer-image">

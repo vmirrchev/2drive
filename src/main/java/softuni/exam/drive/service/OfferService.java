@@ -105,4 +105,12 @@ public class OfferService {
     public List<Offer> getAllOffersByUser(User user) {
         return offerRepository.findAllByAddedBy(user);
     }
+
+    /**
+     * Delete offer from db
+     * @param offer offer object
+     */
+    public void deleteOffer(Offer offer) {
+        offerRepository.delete(offer);
+    }
 }

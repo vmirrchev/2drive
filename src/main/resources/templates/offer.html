@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
   <th:block th:insert="~{fragments/commons::head}"></th:block>
@@ -51,6 +51,9 @@
               <li th:text="'Phone number: ' + ${offer.addedBy.phoneNumber}">Phone number: 0888404040</li>
             </ul>
           </div>
+          <form th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')') or offer.addedBy == #authentication?.getPrincipal()}" th:method="DELETE" th:action="@{/api/v1/offers/{id}(id=${offer.id})}">
+            <button type="submit">Delete offer</button>
+          </form>
         </div>
       </div>
     </section>

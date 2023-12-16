@@ -19,3 +19,14 @@
 .offer .offer-details {
     padding: 1em;
 }
+
+.offer form {
+    display: unset;
+    max-width: unset;
+    margin: unset;
+}
+
+.offer button {
+    width: max-content;
+    margin: 0 auto;
+}

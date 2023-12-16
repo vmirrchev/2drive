@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.OfferBindingModel;
+import softuni.exam.drive.model.entity.Offer;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.service.OfferService;
+import softuni.exam.drive.util.UserUtils;
 
 import java.text.MessageFormat;
 
@@ -56,6 +56,30 @@ public class OfferController {
         }
 
         redirectAttributes.addFlashAttribute("addSuccess", true);
+        return redirect;
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteOffer(@PathVariable("id") Long offerId,
+                              final Authentication authentication,
+                              final RedirectAttributes redirectAttributes)
+    {
+        final String redirect = "redirect:/offers";
+
+        try {
+            final User user = (User) authentication.getPrincipal();
+            final Offer offer = offerService.getOfferById(offerId);
+            final User addedBy = offer.getAddedBy();
+
+            UserUtils.verifyUserCanDeleteOffer(user, addedBy);
+            offerService.deleteOffer(offer);
+        } catch (Exception ex) {
+            LOGGER.error(MessageFormat.format("Offer deletion operation failed. {0}", ex.getMessage()));
+            redirectAttributes.addFlashAttribute("deleteSuccess", false);
+            return redirect;
+        }
+
+        redirectAttributes.addFlashAttribute("deleteSuccess", true);
         return redirect;
     }
 }

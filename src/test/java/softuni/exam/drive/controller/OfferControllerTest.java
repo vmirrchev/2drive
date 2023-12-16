@@ -8,7 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.OfferBindingModel;
+import softuni.exam.drive.model.entity.Offer;
 import softuni.exam.drive.model.entity.User;
+import softuni.exam.drive.model.enums.Role;
 import softuni.exam.drive.service.OfferService;
 
 import java.text.MessageFormat;
@@ -29,8 +31,12 @@ class OfferControllerTest {
     private final Authentication authentication = mock(Authentication.class);
     private final BindingResult bindingResult = mock(BindingResult.class);
     private final RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+    private final User principal = mock(User.class);
     private final User user = mock(User.class);
-    private final String redirectUrl = "redirect:/add-offer";
+    private final Offer offer = mock(Offer.class);
+    private final Long offerId = 1L;
+    private final String redirectAddOfferUrl = "redirect:/add-offer";
+    private final String redirectOffersUrl = "redirect:/offers";
 
     @Test
     void createOfferShouldAddNewOffer(CapturedOutput capturedOutput) {
@@ -42,7 +48,7 @@ class OfferControllerTest {
         verify(offerService, times(1)).createOffer(offerBindingModel, user);
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", true);
         assertEquals("", capturedOutput.getOut());
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddOfferUrl, result);
     }
 
     @Test
@@ -56,7 +62,7 @@ class OfferControllerTest {
         verify(redirectAttributes, times(1)).addFlashAttribute("org.springframework.validation.BindingResult.offerBindingModel", bindingResult);
         verify(redirectAttributes, times(1)).addFlashAttribute("offerBindingModel", offerBindingModel);
         assertEquals("", capturedOutput.getOut());
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddOfferUrl, result);
     }
 
     @Test
@@ -72,6 +78,39 @@ class OfferControllerTest {
         verify(redirectAttributes, times(1)).addFlashAttribute("offerBindingModel", offerBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", false);
         assertThat(capturedOutput.getOut()).contains(MessageFormat.format("Offer creation operation failed. {0}", exceptionMessage));
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddOfferUrl, result);
+    }
+
+    @Test
+    void deleteOfferShouldDelete(CapturedOutput capturedOutput) {
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(offerService.getOfferById(offerId)).thenReturn(offer);
+        when(offer.getAddedBy()).thenReturn(principal);
+        when(principal.getRole()).thenReturn(Role.ROLE_USER);
+
+        final String result = offerController.deleteOffer(offerId, authentication, redirectAttributes);
+
+        verify(offerService, times(1)).getOfferById(offerId);
+        verify(offerService, times(1)).deleteOffer(offer);
+        verify(redirectAttributes, times(1)).addFlashAttribute("deleteSuccess", true);
+        assertEquals("", capturedOutput.getOut());
+        assertEquals(redirectOffersUrl, result);
+    }
+
+    @Test
+    void deleteOfferShouldDeleteHandleExceptions(CapturedOutput capturedOutput) {
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(offerService.getOfferById(offerId)).thenReturn(offer);
+        when(offer.getAddedBy()).thenReturn(user);
+        when(principal.getRole()).thenReturn(Role.ROLE_USER);
+
+
+        final String result = offerController.deleteOffer(offerId, authentication, redirectAttributes);
+
+        verify(offerService, times(1)).getOfferById(offerId);
+        verify(offerService, times(0)).deleteOffer(offer);
+        verify(redirectAttributes, times(1)).addFlashAttribute("deleteSuccess", false);
+        assertThat(capturedOutput.getOut()).contains(MessageFormat.format("Offer created by user ({0}) cannot be deleted by user ({1}).", user.getUsername(), principal.getUsername()));
+        assertEquals(redirectOffersUrl, result);
     }
 }

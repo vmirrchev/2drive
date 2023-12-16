@@ -69,6 +69,8 @@ select {
    color: green;
 }
 
+.text-danger,
+.text-success,
 .offers-message {
     text-align: center;
 }

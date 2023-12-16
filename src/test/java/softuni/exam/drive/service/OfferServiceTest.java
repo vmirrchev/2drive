@@ -228,4 +228,10 @@ class OfferServiceTest {
         assertEquals(offers, result);
         verify(offerRepository, times(1)).findAllByAddedBy(user);
     }
+
+    @Test
+    void deleteOffer() {
+        offerService.deleteOffer(offer);
+        verify(offerRepository, times(1)).delete(offer);
+    }
 }
