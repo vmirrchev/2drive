@@ -6,6 +6,7 @@ import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.model.entity.Model;
 import softuni.exam.drive.model.entity.Offer;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.repository.OfferRepository;
 
@@ -30,7 +31,7 @@ public class OfferService {
      * @param offerBindingModel binding model representing the offer dto
      * @throws RuntimeException when picture bytes can't be retrieved
      */
-    public void createOffer(OfferBindingModel offerBindingModel) {
+    public void createOffer(final OfferBindingModel offerBindingModel, final User user) {
         final Model model = modelService.getModelById(offerBindingModel.getModelId());
         final Engine engine = engineService.getEngineById(offerBindingModel.getEngineId());
 
@@ -46,6 +47,7 @@ public class OfferService {
         }
 
         final Offer offer = new Offer();
+        offer.setAddedBy(user);
         offer.setModel(model);
         offer.setEngine(engine);
         offer.setBodyType(offerBindingModel.getBodyType());
@@ -93,5 +95,14 @@ public class OfferService {
      */
     public List<Offer> getAllOffersByBodyType(BodyType bodyType) {
         return offerRepository.findAllByBodyType(bodyType);
+    }
+
+    /**
+     * Get a list of offers with given creator
+     * @param user creator of the offer
+     * @return List with all offers
+     */
+    public List<Offer> getAllOffersByUser(User user) {
+        return offerRepository.findAllByAddedBy(user);
     }
 }

@@ -17,7 +17,7 @@ import softuni.exam.drive.model.enums.TransmissionType;
 @Data
 public class OfferBindingModel {
 
- @NotNull(message = "Model is required")
+    @NotNull(message = "Model is required")
     private Long modelId;
 
     @NotNull(message = "Engine is required")

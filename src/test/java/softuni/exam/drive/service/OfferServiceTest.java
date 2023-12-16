@@ -9,6 +9,7 @@ import softuni.exam.drive.model.dto.OfferBindingModel;
 import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.model.entity.Model;
 import softuni.exam.drive.model.entity.Offer;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.TransmissionType;
@@ -32,6 +33,7 @@ class OfferServiceTest {
     private final OfferRepository offerRepository = mock(OfferRepository.class);
     private final OfferService offerService = new OfferService(modelService, engineService, offerRepository);
     private final OfferBindingModel offerBindingModel = mock(OfferBindingModel.class);
+    private final User user = mock(User.class);
     private final Offer offer = mock(Offer.class);
     private final Model model = mock(Model.class);
     private final Engine engine = mock(Engine.class);
@@ -50,6 +52,7 @@ class OfferServiceTest {
     private final boolean hasServiceBook = true;
     private final boolean hasAccidentDamage = false;
     private final String exceptionMessage = "message";
+    private final List<Offer> offers = List.of(offer);
 
     @BeforeEach
     public void setUp() {
@@ -81,7 +84,7 @@ class OfferServiceTest {
         when(engineService.getEngineById(engineId)).thenReturn(engine);
         when(picture.getBytes()).thenReturn(pictureBytes);
 
-        offerService.createOffer(offerBindingModel);
+        offerService.createOffer(offerBindingModel, user);
 
         verify(modelService, times(1)).getModelById(modelId);
         verify(engineService, times(1)).getEngineById(engineId);
@@ -109,12 +112,13 @@ class OfferServiceTest {
         when(engineService.getEngineById(engineId)).thenReturn(engine);
         when(picture.getBytes()).thenReturn(new byte[]{});
 
-        offerService.createOffer(offerBindingModel);
+        offerService.createOffer(offerBindingModel, user);
 
         verify(modelService, times(1)).getModelById(modelId);
         verify(engineService, times(1)).getEngineById(engineId);
         verify(offerRepository).save(argumentCaptor.capture());
         final Offer offer = argumentCaptor.getValue();
+        assertEquals(user, offer.getAddedBy());
         assertEquals(model, offer.getModel());
         assertEquals(engine, offer.getEngine());
         assertNull(offer.getPicture());
@@ -134,7 +138,7 @@ class OfferServiceTest {
     void createOfferShouldThrowWhenModelIdInvalid() {
         doThrow(new RuntimeException(exceptionMessage)).when(modelService).getModelById(modelId);
 
-        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.createOffer(offerBindingModel));
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.createOffer(offerBindingModel, user));
 
         assertEquals(exceptionMessage, thrown.getMessage());
         verify(modelService, times(1)).getModelById(modelId);
@@ -146,7 +150,7 @@ class OfferServiceTest {
     void createOfferShouldThrowWhenEngineIdInvalid() {
         doThrow(new RuntimeException(exceptionMessage)).when(engineService).getEngineById(engineId);
 
-        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.createOffer(offerBindingModel));
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.createOffer(offerBindingModel, user));
 
         assertEquals(exceptionMessage, thrown.getMessage());
         verify(modelService, times(1)).getModelById(modelId);
@@ -160,7 +164,7 @@ class OfferServiceTest {
         when(engineService.getEngineById(engineId)).thenReturn(engine);
         doThrow(new IOException("")).when(picture).getBytes();
 
-        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.createOffer(offerBindingModel));
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> offerService.createOffer(offerBindingModel, user));
 
         assertEquals("Error processing offer image", thrown.getMessage());
         verify(modelService, times(1)).getModelById(modelId);
@@ -197,7 +201,6 @@ class OfferServiceTest {
 
     @Test
     void getAllOffersShouldReturnOffers() {
-        final List<Offer> offers = List.of(offer);
         when(offerRepository.findAll()).thenReturn(offers);
 
         final List<Offer> result = offerService.getAllOffers();
@@ -208,12 +211,21 @@ class OfferServiceTest {
 
     @Test
     void getAllOffersByBodyTypeShouldReturnOffers() {
-        final List<Offer> offers = List.of(offer);
         when(offerRepository.findAllByBodyType(bodyType)).thenReturn(offers);
 
         final List<Offer> result = offerService.getAllOffersByBodyType(bodyType);
 
         assertEquals(offers, result);
         verify(offerRepository, times(1)).findAllByBodyType(bodyType);
+    }
+
+    @Test
+    void getAllOffersByUserShouldReturnOffers() {
+        when(offerRepository.findAllByAddedBy(user)).thenReturn(offers);
+
+        final List<Offer> result = offerService.getAllOffersByUser(user);
+
+        assertEquals(offers, result);
+        verify(offerRepository, times(1)).findAllByAddedBy(user);
     }
 }

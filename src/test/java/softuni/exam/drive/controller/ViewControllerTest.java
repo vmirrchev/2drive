@@ -381,11 +381,13 @@ class ViewControllerTest {
     @Test
     void getMyOffersShouldRedirectWhenAuthenticationNull() {
         assertEquals(redirectLoginPath, viewController.getMyOffers(model, null));
+        verify(authentication, times(0)).getPrincipal();
     }
 
     @Test
     void getMyOffersShouldReturnOffers() {
         assertEquals(offersPath, viewController.getMyOffers(model, authentication));
+        verify(authentication, times(1)).getPrincipal();
     }
 
     @Test

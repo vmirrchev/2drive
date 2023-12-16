@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.OfferBindingModel;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.service.OfferService;
 
 import java.text.MessageFormat;
@@ -29,6 +31,7 @@ public class OfferController {
 
     @PostMapping()
     public String createOffer(
+            final Authentication authentication,
             @Valid @ModelAttribute("offerBindingModel") final OfferBindingModel offerBindingModel,
             final BindingResult bindingResult,
             final RedirectAttributes redirectAttributes)
@@ -43,7 +46,8 @@ public class OfferController {
         }
 
         try {
-            offerService.createOffer(offerBindingModel);
+            final User user = (User) authentication.getPrincipal();
+            offerService.createOffer(offerBindingModel, user);
         } catch (Exception ex) {
             LOGGER.error(MessageFormat.format("Offer creation operation failed. {0}", ex.getMessage()));
             redirectAttributes.addFlashAttribute("offerBindingModel", offerBindingModel);

@@ -198,6 +198,9 @@ public class ViewController {
             return "redirect:/login";
         }
 
+        final User user = (User) authentication.getPrincipal();
+        model.addAttribute("offers", offerService.getAllOffersByUser(user));
+
         return "offers";
     }
 

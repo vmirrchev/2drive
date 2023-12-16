@@ -2,6 +2,7 @@ package softuni.exam.drive.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import softuni.exam.drive.model.entity.Offer;
+import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.BodyType;
 
 import java.util.List;
@@ -13,4 +14,6 @@ import java.util.List;
 public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     List<Offer> findAllByBodyType(BodyType bodyType);
+
+    List<Offer> findAllByAddedBy(User user);
 }
