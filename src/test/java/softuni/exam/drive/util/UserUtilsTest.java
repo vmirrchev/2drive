@@ -1,6 +1,8 @@
 package softuni.exam.drive.util;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.Role;
 
@@ -13,15 +15,24 @@ import static org.mockito.Mockito.when;
 /**
  * @author Vasil Mirchev
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserUtilsTest {
 
-    private User offerCreator = mock(User.class);
+    private User user = mock(User.class);
     private User principal = mock(User.class);
+    private final String principalUsername = "user";
+    private final String userUsername = "other user";
+
+    @BeforeAll
+    public void setUp() {
+        when(user.getUsername()).thenReturn(userUsername);
+        when(principal.getUsername()).thenReturn(principalUsername);
+    }
 
     @Test
     void verifyUserCanDeleteOfferWhenUserAdmin() {
         when(principal.getRole()).thenReturn(Role.ROLE_ADMIN);
-        assertDoesNotThrow(() -> UserUtils.verifyUserCanDeleteOffer(principal, offerCreator));
+        assertDoesNotThrow(() -> UserUtils.verifyUserCanDeleteOffer(principal, user));
     }
 
     @Test
@@ -32,14 +43,23 @@ class UserUtilsTest {
 
     @Test
     void verifyUserCanDeleteOfferThrows() {
-        final String principalUsername = "user";
-        final String offerCreatorUsername = "other user";
-        final String message = MessageFormat.format("Offer created by user ({0}) cannot be deleted by user ({1}).", offerCreatorUsername, principalUsername);
+        final String message = MessageFormat.format("Offer created by user ({0}) cannot be deleted by user ({1}).", userUsername, principalUsername);
         when(principal.getRole()).thenReturn(Role.ROLE_USER);
-        when(offerCreator.getUsername()).thenReturn(offerCreatorUsername);
-        when(principal.getUsername()).thenReturn(principalUsername);
 
-        final Throwable thrown = assertThrows(RuntimeException.class, () -> UserUtils.verifyUserCanDeleteOffer(principal, offerCreator));
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> UserUtils.verifyUserCanDeleteOffer(principal, user));
+        assertEquals(message, thrown.getMessage());
+    }
+
+    @Test
+    void verifyUserCanEditProfile() {
+        assertDoesNotThrow(() -> UserUtils.verifyUserCanEditProfile(principal, principal));
+    }
+
+    @Test
+    void verifyUserCanEditProfileThrows() {
+        final String message = MessageFormat.format("Profile of user ({0}) cannot be updated by user ({1}).", userUsername, principalUsername);
+
+        final Throwable thrown = assertThrows(RuntimeException.class, () -> UserUtils.verifyUserCanEditProfile(principal, user));
         assertEquals(message, thrown.getMessage());
     }
 }

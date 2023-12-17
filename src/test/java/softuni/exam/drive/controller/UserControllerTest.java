@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import softuni.exam.drive.model.dto.RegisterBindingModel;
@@ -28,6 +29,7 @@ class UserControllerTest {
     private final UserController userController = new UserController(userService);
     private final RegisterBindingModel registerBindingModel = mock(RegisterBindingModel.class);
     private final User user = mock(User.class);
+    private final Authentication authentication = mock(Authentication.class);
     private final UserBindingModel userBindingModel = mock(UserBindingModel.class);
     private final RoleBindingModel roleBindingModel = mock(RoleBindingModel.class);
     private final BindingResult bindingResult = mock(BindingResult.class);
@@ -83,8 +85,9 @@ class UserControllerTest {
     void updateUserShouldUpdateUserData(CapturedOutput capturedOutput) {
         when(bindingResult.hasErrors()).thenReturn(false);
         when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(user);
 
-        final String result = userController.updateUser(userId, userBindingModel, bindingResult, redirectAttributes);
+        final String result = userController.updateUser(userId, authentication, userBindingModel, bindingResult, redirectAttributes);
 
         verify(userService, times(1)).updateUser(user, userBindingModel);
         verify(userService, times(1)).getUserById(userId);
@@ -98,7 +101,7 @@ class UserControllerTest {
     void updateUserShouldHandleErrors(CapturedOutput capturedOutput) {
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        final String result = userController.updateUser(userId, userBindingModel, bindingResult, redirectAttributes);
+        final String result = userController.updateUser(userId, authentication, userBindingModel, bindingResult, redirectAttributes);
 
         verify(userService, times(0)).updateUser(user, userBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("org.springframework.validation.BindingResult.userBindingModel", bindingResult);
@@ -111,9 +114,10 @@ class UserControllerTest {
     void updateUserShouldHandleExceptions(CapturedOutput capturedOutput) {
         when(bindingResult.hasErrors()).thenReturn(false);
         when(userService.getUserById(userId)).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(user);
         doThrow(new RuntimeException(exceptionMessage)).when(userService).updateUser(user, userBindingModel);
 
-        final String result = userController.updateUser(userId, userBindingModel, bindingResult, redirectAttributes);
+        final String result = userController.updateUser(userId, authentication, userBindingModel, bindingResult, redirectAttributes);
 
         verify(userService, times(1)).updateUser(user, userBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("userBindingModel", userBindingModel);

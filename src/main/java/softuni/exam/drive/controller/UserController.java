@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import softuni.exam.drive.model.dto.RoleBindingModel;
 import softuni.exam.drive.model.dto.UserBindingModel;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.service.UserService;
+import softuni.exam.drive.util.UserUtils;
 
 import java.text.MessageFormat;
 
@@ -59,6 +61,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public String updateUser(
             @PathVariable("id") final Long userId,
+            final Authentication authentication,
             @Valid @ModelAttribute("userBindingModel") final UserBindingModel userBindingModel,
             final BindingResult bindingResult,
             final RedirectAttributes redirectAttributes)
@@ -73,6 +76,9 @@ public class UserController {
 
         try {
             final User user = userService.getUserById(userId);
+            final User principal = (User) authentication.getPrincipal();
+
+            UserUtils.verifyUserCanEditProfile(principal, user);
             userService.updateUser(user, userBindingModel);
         } catch (Exception ex) {
             LOGGER.error(MessageFormat.format("User update operation failed. {0}", ex.getMessage()));
