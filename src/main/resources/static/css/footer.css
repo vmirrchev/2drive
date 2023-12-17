@@ -1,8 +1,11 @@
 footer {
-    background-color: #333;
-    color: #fff;
+    background-color: var(--dark-color);
     padding: 1em;
     text-align: center;
+}
+
+footer p {
+    color: var(--main-color);
 }
 
 footer nav ul {
@@ -12,8 +15,4 @@ footer nav ul {
 
 footer nav ul li {
     margin-right: 20px;
-}
-
-footer nav ul li a {
-    color: white;
 }

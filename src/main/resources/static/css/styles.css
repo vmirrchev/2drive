@@ -1,25 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
+:root {
+  --main-color: #F8F9FA;
+  --dark-color: #343A40;
+  --lighter-color: #ADB5BD;
+  --light-color: #DEE2E6;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
     box-sizing: border-box;
+    max-width: 1920px;
 }
 
 main {
     height: 100%;
     min-height: calc(100vh - 83px - 118px);
+    background: var(--main-color);
+}
+
+main a {
+    color: var(--dark-color);
+    font-weight: bold;
 }
 
 section {
-    padding: 2em;
+    padding: 3em;
 }
 
 form {
     display: flex;
     flex-direction: column;
-    max-width: 300px;
     margin: 0 auto;
 }
 
@@ -31,16 +44,11 @@ form textarea {
 
 form button {
     padding: 10px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--dark-color);
+    color: var(--main-color);
     border: none;
     cursor: pointer;
     border-radius: 5px;
-}
-
-a {
-    text-decoration: none;
-    color: black;
 }
 
 select {
@@ -48,13 +56,14 @@ select {
     padding: 8px;
 }
 
-.cta-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #333;
-    color: red;
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+a {
     text-decoration: none;
-    border-radius: 5px;
+    color: var(--main-color);
 }
 
 .red-two {
@@ -75,6 +84,14 @@ select {
     text-align: center;
 }
 
-#title {
-    border-bottom: 1px solid lightgrey;
+@media only screen and (max-width: 800px) {
+    section {
+        padding: 2em;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    section {
+        padding: 1em;
+    }
 }

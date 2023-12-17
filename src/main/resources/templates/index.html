@@ -1,62 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <th:block th:insert="~{fragments/commons::head}"></th:block>
+        <link rel="stylesheet" href="/css/index.css"/>
+    </head>
 
-<head>
-    <th:block th:insert="~{fragments/commons::head}"></th:block>
-    <link rel="stylesheet" href="/css/index.css"/>
-</head>
+    <body>
+        <header th:replace="~{fragments/commons::header}"></header>
+        <main>
+            <section id="hero">
+                <h1>Welcome to <span class="red-two">2</span>drive used cars shop</h1>
+                <p>Your Ultimate Destination for Automotive Excellence</p>
+                <a th:href="@{/offers}">Shop Now</a>
+            </section>
 
-<body>
-    <header th:replace="~{fragments/commons::header}"></header>
-    <main>
-        <section id="hero">
-            <h1>Welcome to <span class="red-two">2</span>drive used cars shop</h1>
-            <p>Your Ultimate Destination for Automotive Excellence</p>
-            <a class="cta-button" th:href="@{/offers}">Shop Now</a>
-        </section>
+            <section id="features">
+                <div class="features-image-container">
+                    <img th:src="@{/img/used-cars.png}"/>
+                </div>
+                <div class="features-info-container">
+                    <h2>Why <span class="red-two">2</span>drive?</h2>
+                    <ul>
+                        <li>100% Free</li>
+                        <li>Wide Selection</li>
+                        <li>Competitive Prices</li>
+                        <li>Fast and Reliable Support</li>
+                    </ul>
+                </div>
+            </section>
 
-        <section id="features">
-            <div class="features-image-container">
-                <img th:src="@{/img/used-cars.png}"/>
-            </div>
-            <div class="features-info-container">
-                <h2>Why <span class="red-two">2</span>drive?</h2>
-                <ul>
-                    <li>100% Free</li>
-                    <li>Wide Selection</li>
-                    <li>Competitive Prices</li>
-                    <li>Fast and Reliable Support</li>
-                </ul>
-            </div>
-        </section>
+            <section id="categories">
+                <h1>Explore by category</h1>
+                <div class="categories-container">
+                    <div class="category" th:each="bodyType:${bodyTypes}">
+                        <a th:href="@{/offers/filter(bodyType=${bodyType})}" class="" th:text="'Shop ' + ${#strings.toLowerCase(bodyType)}">Shop HATCHBACK</a>
+                    </div>
+                </div>
+            </section>
 
-        <section id="find-car">
-            <div class="featured-type" th:each="bodyType:${bodyTypes}">
-                <img th:src="@{/img/car-side-image.png}"/>
-                <a th:href="@{/offers/filter(bodyType=${bodyType})}" class="cta-button" th:text="'Shop ' + ${#strings.toLowerCase(bodyType)}">Shop HATCHBACK</a>
-            </div>
-        </section>
-
-        <section id="categories">
-            <div class="categories-info-container">
-                <h2>Useful links</h2>
-                <ul>
-                    <li><a th:href="@{/site-map}">Site map</a></li>
-                    <li><a th:href="@{/about-us}">About us</a></li>
-                    <li><a th:href="@{/contact-us}">Contact us</a></li>
-                    <li><a th:href="@{/site-map}">Site map</a></li>
-                    <li><a href="https://www.instagram.com">Instagram</a></li>
-                    <li><a href="https://www.facebook.com">Facebook</a></li>
-                    <li><a href="https://www.twitter.com">Twitter</a></li>
-                </ul>
-            </div>
-            <div class="categories-image-container">
-                <img th:src="@{/img/used-cars2.png}"/>
-            </div>
-        </section>
-    </main>
-    <footer th:replace="~{fragments/commons::footer}"></footer>
-</body>
-
+            <section id="useful">
+                <div class="useful-info-container">
+                    <h2>Useful links</h2>
+                    <ul>
+                        <li><a th:href="@{/site-map}">Site map</a></li>
+                        <li><a th:href="@{/about-us}">About us</a></li>
+                        <li><a th:href="@{/contact-us}">Contact us</a></li>
+                        <li><a href="https://www.instagram.com">Instagram</a></li>
+                        <li><a href="https://www.facebook.com">Facebook</a></li>
+                        <li><a href="https://www.twitter.com">Twitter</a></li>
+                    </ul>
+                </div>
+                <div class="useful-image-container">
+                    <img th:src="@{/img/used-cars2.png}"/>
+                </div>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/commons::footer}"></footer>
+    </body>
 </html>

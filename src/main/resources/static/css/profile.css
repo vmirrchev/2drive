@@ -1,8 +1,15 @@
-.profile-image {
-    background: lightgrey;
+#profile .profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 1px 1px 10px black;
+    padding: 2em;
+}
+
+#profile .profile-container .profile-image {
+    background: var(--lighter-color);
     padding: 1em;
 }
 
-.profile-image img {
+#profile .profile-container .profile-image img {
     width: 50px;
 }

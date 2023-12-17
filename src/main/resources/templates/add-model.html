@@ -1,66 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <th:block th:insert="~{fragments/commons::head}"></th:block>
+        <link rel="stylesheet" href="/css/add-model.css"/>
+    </head>
 
-<head>
-    <th:block th:insert="~{fragments/commons::head}"></th:block>
-    <link rel="stylesheet" href="/css/add-model.css"/>
-</head>
-
-<body>
-<header th:replace="~{fragments/commons::header}"></header>
-<main>
-    <section id="title">
-        <h2>Add model</h2>
-    </section>
-
-    <section id="add-model">
-        <!-- New model form goes here -->
-        <form th:method="POST" th:action="@{/api/v1/models}" th:object="${modelBindingModel}">
-            <!-- Include input fields for model information -->
-            <!-- dropdown with brands -->
-            <p class="text-success" th:if="${addSuccess == true}">Model added successfully</p>
-            <p class="text-danger" th:if="${addSuccess == false}">Model could not be added. Please try again or contact administrator</p>
-            <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>
-            <select name="brandId" onchange="fetchEngines()">
-                <option value="" disabled selected>Select manufacturer</option>
-                <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
-            </select>
-            <!-- dropdowns with engines for the brand -->
-            <p class="text-danger" th:if="${#fields.hasErrors('engineIds')}" th:errors="*{engineIds}"></p>
-            <select name="engineIds" multiple>
-                <option value="" disabled selected>Select engine</option>
-            </select>
-            <!-- dropdowns with body types -->
-            <p class="text-danger" th:if="${#fields.hasErrors('bodyTypes')}" th:errors="*{bodyTypes}"></p>
-            <select name="bodyTypes" multiple>
-                <option value="" disabled selected>Select body type</option>
-                <option th:each="bodyType:${bodyTypes}" th:value="${bodyType}" th:text="${bodyType}"></option>
-            </select>
-            <!-- dropdowns with drive types -->
-            <p class="text-danger" th:if="${#fields.hasErrors('driveTypes')}" th:errors="*{driveTypes}"></p>
-            <select name="driveTypes" multiple>
-                <option value="" disabled selected>Select drive type</option>
-                <option th:each="driveType:${driveTypes}" th:value="${driveType}" th:text="${driveType}"></option>
-            </select>
-            <!-- dropdowns with transmission types -->
-            <p class="text-danger" th:if="${#fields.hasErrors('transmissionTypes')}" th:errors="*{transmissionTypes}"></p>
-            <select name="transmissionTypes" multiple>
-                <option value="" disabled selected>Select drive type</option>
-                <option th:each="transmissionType:${transmissionTypes}" th:value="${transmissionType}" th:text="${transmissionType}"></option>
-            </select>
-            <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
-            <input type="text" name="name" placeholder="Name">
-            <p class="text-danger" th:if="${#fields.hasErrors('startYear')}" th:errors="*{startYear}"></p>
-            <input type="number" name="startYear" placeholder="Start year">
-            <p class="text-danger" th:if="${#fields.hasErrors('endYear')}" th:errors="*{endYear}"></p>
-            <input type="number" name="endYear" placeholder="End year">
-            <button type="submit">Add model</button>
-        </form>
-    </section>
-</main>
-<footer th:replace="~{fragments/commons::footer}"></footer>
-<script th:src="@{/js/model.js}"></script>
-</body>
-
+    <body>
+    <header th:replace="~{fragments/commons::header}"></header>
+    <main>
+        <section id="add-model">
+            <div class="add-model-container">
+                <h1>Add new model</h1>
+                <form th:method="POST" th:action="@{/api/v1/models}" th:object="${modelBindingModel}">
+                    <!-- dropdown with brands -->
+                    <p class="text-success" th:if="${addSuccess == true}">Model added successfully</p>
+                    <p class="text-danger" th:if="${addSuccess == false}">Model could not be added. Please try again or contact administrator</p>
+                    <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>
+                    <select name="brandId" onchange="fetchEngines()">
+                        <option value="" disabled selected>Select manufacturer</option>
+                        <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                    </select>
+                    <!-- dropdowns with engines for the brand -->
+                    <p class="text-danger" th:if="${#fields.hasErrors('engineIds')}" th:errors="*{engineIds}"></p>
+                    <select name="engineIds" multiple>
+                        <option value="" disabled selected>Select engine</option>
+                    </select>
+                    <!-- dropdowns with body types -->
+                    <p class="text-danger" th:if="${#fields.hasErrors('bodyTypes')}" th:errors="*{bodyTypes}"></p>
+                    <select name="bodyTypes" multiple>
+                        <option value="" disabled selected>Select body type</option>
+                        <option th:each="bodyType:${bodyTypes}" th:value="${bodyType}" th:text="${bodyType}"></option>
+                    </select>
+                    <!-- dropdowns with drive types -->
+                    <p class="text-danger" th:if="${#fields.hasErrors('driveTypes')}" th:errors="*{driveTypes}"></p>
+                    <select name="driveTypes" multiple>
+                        <option value="" disabled selected>Select drive type</option>
+                        <option th:each="driveType:${driveTypes}" th:value="${driveType}" th:text="${driveType}"></option>
+                    </select>
+                    <!-- dropdowns with transmission types -->
+                    <p class="text-danger" th:if="${#fields.hasErrors('transmissionTypes')}" th:errors="*{transmissionTypes}"></p>
+                    <select name="transmissionTypes" multiple>
+                        <option value="" disabled selected>Select drive type</option>
+                        <option th:each="transmissionType:${transmissionTypes}" th:value="${transmissionType}" th:text="${transmissionType}"></option>
+                    </select>
+                    <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                    <input type="text" name="name" placeholder="Name">
+                    <p class="text-danger" th:if="${#fields.hasErrors('startYear')}" th:errors="*{startYear}"></p>
+                    <input type="number" name="startYear" placeholder="Start year">
+                    <p class="text-danger" th:if="${#fields.hasErrors('endYear')}" th:errors="*{endYear}"></p>
+                    <input type="number" name="endYear" placeholder="End year">
+                    <button type="submit">Add model</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/commons::footer}"></footer>
+    <script th:src="@{/js/model.js}"></script>
+    </body>
 </html>

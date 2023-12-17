@@ -1,20 +1,25 @@
-.profile-details form {
-    display: flex;
-    flex-direction: column;
-    max-width: 350px;
-    margin: 0;
-}
-
-.profile-details div {
-    display: flex;
-    justify-content: space-between;
+#profile .profile-container .detail {
     align-items: center;
+    display: flex;
+    margin-bottom: 1em;
 }
 
-.profile-details input {
+#profile .profile-container .detail p,
+#profile .profile-container .detail div{
+    flex: 50%;
+}
+
+#profile .profile-container .detail input {
     margin: 0;
 }
 
-.profile-details button {
+#profile .profile-container .profile-details button {
     width: max-content;
+}
+
+@media only screen and (max-width: 400px) {
+    #profile .profile-container .detail {
+        flex-direction: column;
+        align-items: unset;
+    }
 }

@@ -1,6 +1,30 @@
+#add-offer .add-offer-container {
+    text-align: center;
+    padding: 2em;
+    max-width: 800px;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+#picture {
+    color: transparent;
+}
+
 .features-container,
 .picture-container {
     margin-bottom: 10px;
     border: 1px solid black;
     padding: 8px;
+    text-align: left;
+}
+
+.picture-container {
+    display: flex;
+    flex-direction: column;
+}
+
+@media only screen and (max-width: 300px) {
+    #add-offer .add-offer-container {
+        padding: 1em;
+    }
 }

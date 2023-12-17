@@ -1,86 +1,82 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xml:lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xml:lang="en">
+    <head>
+        <th:block th:insert="~{fragments/commons::head}"></th:block>
+        <link rel="stylesheet" href="/css/add-offer.css"/>
+    </head>
 
-<head>
-    <th:block th:insert="~{fragments/commons::head}"></th:block>
-    <link rel="stylesheet" href="/css/add-offer.css"/>
-</head>
-
-<body>
-    <header th:replace="~{fragments/commons::header}"></header>
-    <main>
-        <section id="title">
-            <h2>Add offer</h2>
-        </section>
-
-        <section id="add-offer">
-            <!-- New offer form goes here -->
-            <form th:method="POST" th:action="@{/api/v1/offers}" th:object="${offerBindingModel}" enctype="multipart/form-data">
-                <!-- Include input fields for offer information -->
-                <!-- dropdown with brand -->
-                <p class="text-success" th:if="${addSuccess == true}">Offer added successfully</p>
-                <p class="text-danger" th:if="${addSuccess == false}">Offer could not be added. Please try again or contact administrator</p>
-<!--                <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>-->
-                <select name="brandId" onchange="fetchModels()">
-                    <option value="" disabled selected>Select manufacturer</option>
-                    <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
-                </select>
-                <!-- dropdown with model -->
-                <p class="text-danger" th:if="${#fields.hasErrors('modelId')}" th:errors="*{modelId}"></p>
-                <select name="modelId" onchange="fetchModel()">
-                    <option value="" disabled selected>Select car model</option>
-                </select>
-                <!-- dropdown with engines for the model -->
-                <p class="text-danger" th:if="${#fields.hasErrors('engineId')}" th:errors="*{engineId}"></p>
-                <select name="engineId">
-                    <option value="" disabled selected>Select car engine</option>
-                </select>
-                <!-- dropdown with body type for the model -->
-                <p class="text-danger" th:if="${#fields.hasErrors('bodyType')}" th:errors="*{bodyType}"></p>
-                <select name="bodyType">
-                    <option value="" disabled selected>Select body type</option>
-                </select>
-                <!-- dropdown with drive type for the model -->
-                <p class="text-danger" th:if="${#fields.hasErrors('driveType')}" th:errors="*{driveType}"></p>
-                <select name="driveType">
-                    <option value="" disabled selected>Select drive type</option>
-                </select>
-                <!-- dropdown with transmission for the model -->
-                <p class="text-danger" th:if="${#fields.hasErrors('transmissionType')}" th:errors="*{transmissionType}"></p>
-                <select name="transmissionType">
-                    <option value="" disabled selected>Select transmission type</option>
-                </select>
-                <p class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
-                <input type="text" name="title" placeholder="Title">
-                <p class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></p>
-                <input type="number" name="price" placeholder="Price">
-                <p class="text-danger" th:if="${#fields.hasErrors('odometer')}" th:errors="*{odometer}"></p>
-                <input type="number" name="odometer" placeholder="Odometer">
-                <p class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></p>
-                <input type="number" name="year" placeholder="Year">
-                <p class="text-danger" th:if="${#fields.hasErrors('color')}" th:errors="*{color}"></p>
-                <input type="text" name="color" placeholder="Color">
-                <p class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
-                <textarea rows="8" cols="120" name="description" placeholder="Description"></textarea>
-                <div class="features-container">
-                    <label for="hasServiceBook">Service book</label>
-                    <input type="checkbox" name="hasServiceBook" id="hasServiceBook">
-                    <label for="hasAccidentDamage">Accident damage</label>
-                    <input type="checkbox" name="hasAccidentDamage" id="hasAccidentDamage">
+    <body>
+        <header th:replace="~{fragments/commons::header}"></header>
+        <main>
+            <section id="add-offer">
+                <div class="add-offer-container">
+                    <h1>Add new offer</h1>
+                    <form th:method="POST" th:action="@{/api/v1/offers}" th:object="${offerBindingModel}" enctype="multipart/form-data">
+                        <!-- dropdown with brand -->
+                        <p class="text-success" th:if="${addSuccess == true}">Offer added successfully</p>
+                        <p class="text-danger" th:if="${addSuccess == false}">Offer could not be added. Please try again or contact administrator</p>
+                        <select name="brandId" onchange="fetchModels()">
+                            <option value="" disabled selected>Select manufacturer</option>
+                            <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                        </select>
+                        <!-- dropdown with model -->
+                        <p class="text-danger" th:if="${#fields.hasErrors('modelId')}" th:errors="*{modelId}"></p>
+                        <select name="modelId" onchange="fetchModel()">
+                            <option value="" disabled selected>Select car model</option>
+                        </select>
+                        <!-- dropdown with engines for the model -->
+                        <p class="text-danger" th:if="${#fields.hasErrors('engineId')}" th:errors="*{engineId}"></p>
+                        <select name="engineId">
+                            <option value="" disabled selected>Select car engine</option>
+                        </select>
+                        <!-- dropdown with body type for the model -->
+                        <p class="text-danger" th:if="${#fields.hasErrors('bodyType')}" th:errors="*{bodyType}"></p>
+                        <select name="bodyType">
+                            <option value="" disabled selected>Select body type</option>
+                        </select>
+                        <!-- dropdown with drive type for the model -->
+                        <p class="text-danger" th:if="${#fields.hasErrors('driveType')}" th:errors="*{driveType}"></p>
+                        <select name="driveType">
+                            <option value="" disabled selected>Select drive type</option>
+                        </select>
+                        <!-- dropdown with transmission for the model -->
+                        <p class="text-danger" th:if="${#fields.hasErrors('transmissionType')}" th:errors="*{transmissionType}"></p>
+                        <select name="transmissionType">
+                            <option value="" disabled selected>Select transmission type</option>
+                        </select>
+                        <p class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+                        <input type="text" name="title" placeholder="Title">
+                        <p class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></p>
+                        <input type="number" name="price" placeholder="Price">
+                        <p class="text-danger" th:if="${#fields.hasErrors('odometer')}" th:errors="*{odometer}"></p>
+                        <input type="number" name="odometer" placeholder="Odometer">
+                        <p class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></p>
+                        <input type="number" name="year" placeholder="Year">
+                        <p class="text-danger" th:if="${#fields.hasErrors('color')}" th:errors="*{color}"></p>
+                        <input type="text" name="color" placeholder="Color">
+                        <p class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+                        <textarea rows="8" cols="120" name="description" placeholder="Description"></textarea>
+                        <div class="features-container">
+                            <div class="feature">
+                                <label for="hasServiceBook">Service book</label>
+                                <input type="checkbox" name="hasServiceBook" id="hasServiceBook">
+                            </div>
+                            <div class="feature">
+                                <label for="hasAccidentDamage">Accident damage</label>
+                                <input type="checkbox" name="hasAccidentDamage" id="hasAccidentDamage">
+                            </div>
+                        </div>
+                        <p class="text-danger" th:if="${#fields.hasErrors('picture')}" th:errors="*{picture}"></p>
+                        <div class="picture-container">
+                            <label for="picture">Picture</label>
+                            <input type="file" id="picture" name="picture" accept="jpg, png" />
+                        </div>
+                        <button type="submit">Add offer</button>
+                    </form>
                 </div>
-                <p class="text-danger" th:if="${#fields.hasErrors('picture')}" th:errors="*{picture}"></p>
-                <div class="picture-container">
-                    <label for="picture">Picture</label>
-                    <input type="file" id="picture" name="picture" accept="jpg, png" />
-                </div>
-                <button type="submit">Add offer</button>
-            </form>
-        </section>
-    </main>
-    <footer th:replace="~{fragments/commons::footer}"></footer>
-    <script th:src="@{/js/offer.js}"></script>
-</body>
-
+            </section>
+        </main>
+        <footer th:replace="~{fragments/commons::footer}"></footer>
+        <script th:src="@{/js/offer.js}"></script>
+    </body>
 </html>

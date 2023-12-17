@@ -1,44 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <th:block th:insert="~{fragments/commons::head}"></th:block>
+        <link rel="stylesheet" href="/css/offers.css"/>
+    </head>
 
-<head>
-    <th:block th:insert="~{fragments/commons::head}"></th:block>
-    <link rel="stylesheet" href="/css/offers.css"/>
-</head>
-
-<body>
-    <header th:replace="~{fragments/commons::header}"></header>
-    <main>
-        <section id="title">
-            <h2>Offers</h2>
-        </section>
-
-        <section id="offers">
-            <p class="text-success" th:if="${deleteSuccess == true}">Offer deleted successfully</p>
-            <p class="text-danger" th:if="${deleteSuccess == false}">Offer could not be deleted. Please try again or contact administrator</p>
-            <p class="offers-message" th:if="${offers.size() == 0}">Oops! It seems the offers you're looking for aren't available.</p>
-            <div class="offer" th:each="offer:${offers}">
-                <div class="offer-image">
-                    <img th:if="${offer.picture != null}" th:src="@{'data:image/jpeg;base64,'+${offer.generateBase64Image()}}"/>
-                    <img th:unless="${offer.picture != null}" th:src="@{/img/no-image.png}"/>
+    <body>
+        <header th:replace="~{fragments/commons::header}"></header>
+        <main>
+            <section id="offers">
+                <p class="text-success" th:if="${deleteSuccess == true}">Offer deleted successfully</p>
+                <p class="text-danger" th:if="${deleteSuccess == false}">Offer could not be deleted. Please try again or contact administrator</p>
+                <p class="offers-message" th:if="${offers.size() == 0}">Oops! It seems the offers you're looking for aren't available.</p>
+                <div class="offer" th:each="offer:${offers}">
+                    <div class="offer-image">
+                        <img th:if="${offer.picture != null}" th:src="@{'data:image/jpeg;base64,'+${offer.generateBase64Image()}}"/>
+                        <img th:unless="${offer.picture != null}" th:src="@{/img/no-image.png}"/>
+                    </div>
+                    <div class="offer-details">
+                        <h2 th:text="${offer.title}">2023 Model XYZ Sedan</h2>
+                        <ul>
+                            <li th:text="'Model: ' + ${offer.model.name}">Model: XYZ Sedan</li>
+                            <li th:text="'Engine: ' + ${#strings.toLowerCase(offer.engine.fuelType)} + ' ' + ${offer.engine.horsepower} +'HP'">Engine: </li>
+                            <li th:text="'Transmission: ' + ${#strings.toLowerCase(offer.transmissionType)}">Transmission: Automatic</li>
+                            <li th:text="'Color: ' + ${offer.color}">Color: Midnight Black</li>
+                            <li th:text="'Odometer: ' + ${offer.odometer} + 'KM'">Odometer: 123 000KM</li>
+                            <li th:text="'Price: ' + ${offer.price} + 'BGN'">Price: 5000 BGN</li>
+                        </ul>
+                        <a th:href="@{/offers/{id}(id=${offer.id})}">Go to offer</a>
+                    </div>
                 </div>
-                <div class="offer-details">
-                    <h2 th:text="${offer.title}">2023 Model XYZ Sedan</h2>
-                    <ul>
-                        <li th:text="'Model: ' + ${offer.model.name}">Model: XYZ Sedan</li>
-                        <li th:text="'Engine: ' + ${#strings.toLowerCase(offer.engine.fuelType)} + ' ' + ${offer.engine.horsepower} +'HP'">Engine: </li>
-                        <li th:text="'Transmission: ' + ${#strings.toLowerCase(offer.transmissionType)}">Transmission: Automatic</li>
-                        <li th:text="'Color: ' + ${offer.color}">Color: Midnight Black</li>
-                        <li th:text="'Odometer: ' + ${offer.odometer} + 'KM'">Odometer: 123 000KM</li>
-                        <li th:text="'Price: ' + ${offer.price} + 'BGN'">Price: 5000 BGN</li>
-                    </ul>
-                    <a th:href="@{/offers/{id}(id=${offer.id})}" class="cta-button">Go to offer</a>
-                </div>
-            </div>
-        </section>
-    </main>
-    <footer th:replace="~{fragments/commons::footer}"></footer>
-</body>
-
+            </section>
+        </main>
+        <footer th:replace="~{fragments/commons::footer}"></footer>
+    </body>
 </html>

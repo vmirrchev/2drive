@@ -1,4 +1,4 @@
-#add-model .add-model-container {
+#add-engine .add-engine-container {
     text-align: center;
     padding: 2em;
     max-width: 800px;
@@ -7,7 +7,7 @@
 }
 
 @media only screen and (max-width: 300px) {
-    #add-model .add-model-container {
+    #add-engine .add-engine-container {
         padding: 1em;
     }
 }

@@ -1,13 +1,14 @@
-#add-model .add-model-container {
+#register .register-container {
     text-align: center;
+    box-shadow: 1px 1px 10px black;
     padding: 2em;
-    max-width: 800px;
+    max-width: 250px;
     border-radius: 10px;
     margin: 0 auto;
 }
 
 @media only screen and (max-width: 300px) {
-    #add-model .add-model-container {
+    #register .register-container {
         padding: 1em;
     }
 }

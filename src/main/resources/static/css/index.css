@@ -3,63 +3,92 @@
     text-align: center;
 }
 
-#features,
+#hero,
 #categories {
+    background-color: var(--light-color);
+}
+
+#features,
+#useful {
     display: flex;
-    background: lightgray;
 }
 
 #features ul,
-#categories ul {
-    list-style: none;
+#useful ul {
     padding: 0;
-    flex-wrap: wrap;
 }
 
 #features ul li,
-#categories ul li {
+#useful ul li {
     margin-right: 20px;
     margin-bottom: 10px;
 }
 
-#categories ul li a {
-    color: white;
-}
-
-#features .features-image-container, #categories .categories-image-container {
+#features .features-image-container, #useful .useful-image-container {
     flex: 65%;
 }
 
-#features .features-info-container, #categories .categories-info-container {
+#features .features-info-container, #useful .useful-info-container {
     flex: 35%;
-    padding-left: 5em;
 }
 
-#features .features-image-container img, #categories .categories-image-container img {
+#features .features-info-container {
+    padding: 2em;
+}
+
+#features .features-image-container img, #useful .useful-image-container img {
     width: 100%;
     object-fit: cover;
 }
 
-#find-car {
+#categories {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-#find-car div {
+#categories .categories-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 1em;
-    border: 2px solid grey;
-    max-width: 400px;
 }
 
-#find-car img {
-    width: 100%;
-    object-fit: cover;
+#categories .category {
+    font-weight: bold;
+    flex: 1;
+    padding: 2em 1em;
+    margin: 1em;
+    text-align: center;
+    box-shadow: 1px 1px 10px black;
+    background: background-color: var(--lighter-color);
 }
 
-#find-car a {
-    color: red;
-    margin: 1em;
+#categories .category:hover {
+  transform: scale(1.2);
+}
+
+@media only screen and (max-width: 1200px) {
+  #categories .category {
+    flex: unset;
+  }
+  #categories .categories-container {
+      flex-wrap: wrap;
+      justify-content: center;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  #features,
+  #useful {
+  	display: flex;
+  	flex-direction: column;
+  	text-align: center;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #categories h1 {
+    text-align: center;
+  }
+  #categories .categories-container {
+      flex-wrap: unset;
+      flex-direction: column;
+  }
 }

@@ -1,16 +1,21 @@
-#role div {
+#edit-role .edit-role-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+#edit-role .edit-role-container div {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 1px solid var(--light-color);
 }
 
-#role div p,
-#role div select {
+#edit-role .edit-role-container p,
+#edit-role .edit-role-container div select {
     width: 50%;
 }
 
-#role button {
+#edit-role .edit-role-container button {
     width: max-content;
 }
 

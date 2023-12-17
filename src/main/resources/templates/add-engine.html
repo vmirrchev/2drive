@@ -1,43 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{fragments/commons::head}"></head>
-
-<body>
-<header th:replace="~{fragments/commons::header}"></header>
-<main>
-    <section id="title">
-        <h2>Add engine</h2>
-    </section>
-
-    <section id="add-engine">
-        <!-- New engine form goes here -->
-        <form th:method="POST" th:action="@{/api/v1/engines}" th:object="${engineBindingModel}">
-            <!-- Include input fields for engine information -->
-            <p class="text-success" th:if="${addSuccess == true}">Engine added successfully</p>
-            <p class="text-danger" th:if="${addSuccess == false}">Engine could not be added. Please try again or contact administrator</p>
-            <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>
-            <select name="brandId">
-                <option value="" disabled selected>Select manufacturer</option>
-                <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
-            </select>
-            <p class="text-danger" th:if="${#fields.hasErrors('fuelType')}" th:errors="*{fuelType}"></p>
-            <select name="fuelType">
-                <option value="" disabled selected>Select fuel type</option>
-                <option th:each="fuelType: ${fuelTypes}" th:value="${fuelType}" th:text="${fuelType}"></option>
-            </select>
-            <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
-            <input type="text" name="name" placeholder="Name">
-            <p class="text-danger" th:if="${#fields.hasErrors('horsepower')}" th:errors="*{horsepower}"></p>
-            <input type="number" name="horsepower" placeholder="Horsepower">
-            <p class="text-danger" th:if="${#fields.hasErrors('displacement')}" th:errors="*{displacement}"></p>
-            <input type="number" name="displacement" placeholder="Displacement">
-            <button type="submit">Add engine</button>
-        </form>
-    </section>
-</main>
-<footer th:replace="~{fragments/commons::footer}"></footer>
-</body>
-
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <th:block th:insert="~{fragments/commons::head}"></th:block>
+        <link rel="stylesheet" href="/css/add-engine.css"/>
+    </head>
+    <body>
+        <header th:replace="~{fragments/commons::header}"></header>
+        <main>
+            <section id="add-engine">
+                <div class="add-engine-container">
+                    <h1>Add new engine</h1>
+                    <form th:method="POST" th:action="@{/api/v1/engines}" th:object="${engineBindingModel}">
+                        <p class="text-success" th:if="${addSuccess == true}">Engine added successfully</p>
+                        <p class="text-danger" th:if="${addSuccess == false}">Engine could not be added. Please try again or contact administrator</p>
+                        <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>
+                        <select name="brandId">
+                            <option value="" disabled selected>Select manufacturer</option>
+                            <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                        </select>
+                        <p class="text-danger" th:if="${#fields.hasErrors('fuelType')}" th:errors="*{fuelType}"></p>
+                        <select name="fuelType">
+                            <option value="" disabled selected>Select fuel type</option>
+                            <option th:each="fuelType: ${fuelTypes}" th:value="${fuelType}" th:text="${fuelType}"></option>
+                        </select>
+                        <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                        <input type="text" name="name" placeholder="Name">
+                        <p class="text-danger" th:if="${#fields.hasErrors('horsepower')}" th:errors="*{horsepower}"></p>
+                        <input type="number" name="horsepower" placeholder="Horsepower">
+                        <p class="text-danger" th:if="${#fields.hasErrors('displacement')}" th:errors="*{displacement}"></p>
+                        <input type="number" name="displacement" placeholder="Displacement">
+                        <button type="submit">Add engine</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/commons::footer}"></footer>
+    </body>
 </html>
