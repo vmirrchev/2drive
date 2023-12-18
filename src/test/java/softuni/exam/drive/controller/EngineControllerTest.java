@@ -1,17 +1,12 @@
 package softuni.exam.drive.controller;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import softuni.exam.drive.model.dto.EngineBindingModel;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.dto.EngineDTO;
 import softuni.exam.drive.model.entity.Engine;
-import softuni.exam.drive.service.EngineService;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -24,22 +19,9 @@ import static org.mockito.Mockito.*;
  * @author Vasil Mirchev
  */
 @ExtendWith(OutputCaptureExtension.class)
-class EngineControllerTest {
+class EngineControllerTest extends BaseTest {
 
-    private final EngineService engineService = mock(EngineService.class);
-    private final ModelMapper modelMapper = new ModelMapper();
     private final EngineController engineController = new EngineController(engineService, modelMapper);
-    private final EngineBindingModel engineBindingModel = mock(EngineBindingModel.class);
-    private final BindingResult bindingResult = mock(BindingResult.class);
-    private final RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
-    private final String redirectUrl = "redirect:/add-engine";
-    private final Long brandId = 1L;
-    private final String exceptionMessage = "message";
-
-    @AfterEach
-    public void clean() {
-        reset(engineService, redirectAttributes);
-    }
 
     @Test
     void createEngineShouldAddNewEngine(CapturedOutput capturedOutput) {
@@ -50,7 +32,7 @@ class EngineControllerTest {
         verify(engineService, times(1)).createEngine(engineBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", true);
         assertEquals("", capturedOutput.getOut());
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddEngineUrl, result);
     }
 
     @Test
@@ -61,9 +43,9 @@ class EngineControllerTest {
 
         verify(engineService, times(0)).createEngine(engineBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("org.springframework.validation.BindingResult.engineBindingModel", bindingResult);
-        verify(redirectAttributes, times(1)).addFlashAttribute("engineBindingModel", engineBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute(engineBindingModelAttribute, engineBindingModel);
         assertEquals("", capturedOutput.getOut());
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddEngineUrl, result);
     }
 
     @Test
@@ -74,10 +56,10 @@ class EngineControllerTest {
         final String result = engineController.createEngine(engineBindingModel, bindingResult, redirectAttributes);
 
         verify(engineService, times(1)).createEngine(engineBindingModel);
-        verify(redirectAttributes, times(1)).addFlashAttribute("engineBindingModel", engineBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute(engineBindingModelAttribute, engineBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", false);
         assertThat(capturedOutput.getOut()).contains(MessageFormat.format("Engine creation operation failed. {0}", exceptionMessage));
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddEngineUrl, result);
     }
 
     @Test

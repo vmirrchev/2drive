@@ -3,23 +3,20 @@ package softuni.exam.drive.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import softuni.exam.drive.model.entity.User;
-import softuni.exam.drive.repository.UserRepository;
+import softuni.exam.drive.BaseTest;
 
 import java.text.MessageFormat;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Vasil Mirchev
  */
-class UserDetailsServiceImplTest {
+class UserDetailsServiceImplTest extends BaseTest {
 
-    private final UserRepository userRepository = mock(UserRepository.class);
     private final UserDetailsServiceImpl userDetailsService = new UserDetailsServiceImpl(userRepository);
-    private final User user = mock(User.class);
-    private final String username = "user";
 
     @Test
     void loadUserByUsernameShouldReturnUserDetails() {

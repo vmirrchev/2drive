@@ -1,12 +1,10 @@
 package softuni.exam.drive.service;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import softuni.exam.drive.model.dto.EngineBindingModel;
-import softuni.exam.drive.model.entity.Brand;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.entity.Engine;
-import softuni.exam.drive.model.enums.FuelType;
-import softuni.exam.drive.repository.EngineRepository;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -20,50 +18,33 @@ import static org.mockito.Mockito.*;
 /**
  * @author Vasil Mirchev
  */
-class EngineServiceTest {
+class EngineServiceTest extends BaseTest {
 
-    private final EngineRepository engineRepository = mock(EngineRepository.class);
-    private final BrandService brandService = mock(BrandService.class);
     private final EngineService engineService = new EngineService(engineRepository, brandService);
-    private final EngineBindingModel engineBindingModel = mock(EngineBindingModel.class);
-    private final Brand engineBrand = mock(Brand.class);
-    private final Engine engine = mock(Engine.class);
-    private final FuelType engineFuelType = FuelType.DIESEL;
-    private final String engineName = "M47TUD20";
-    private final Integer engineDisplacement = 1995;
-    private final Integer engineHorsepower = 150;
-    private final Long engineId = 1L;
-    private final Long brandId = 1L;
-    private final String exceptionMessage = "message";
 
     @BeforeEach
     public void setUp() {
-        when(engineBindingModel.getFuelType()).thenReturn(engineFuelType);
+        when(engineBindingModel.getFuelType()).thenReturn(fuelType);
         when(engineBindingModel.getName()).thenReturn(engineName);
-        when(engineBindingModel.getDisplacement()).thenReturn(engineDisplacement);
-        when(engineBindingModel.getHorsepower()).thenReturn(engineHorsepower);
-    }
-
-    @AfterEach
-    public void clean() {
-        reset(brandService, engineBindingModel);
+        when(engineBindingModel.getDisplacement()).thenReturn(displacement);
+        when(engineBindingModel.getHorsepower()).thenReturn(horsepower);
     }
 
     @Test
     void createEngineShouldAddNewEngine() {
         final ArgumentCaptor<Engine> argumentCaptor = ArgumentCaptor.forClass(Engine.class);
-        when(brandService.getById(any())).thenReturn(engineBrand);
+        when(brandService.getById(any())).thenReturn(brand);
 
         engineService.createEngine(engineBindingModel);
 
         verify(engineRepository, times(1)).existsByName(engineName);
         verify(engineRepository).save(argumentCaptor.capture());
         final Engine engine = argumentCaptor.getValue();
-        assertEquals(engineBrand, engine.getBrand());
-        assertEquals(engineFuelType, engine.getFuelType());
+        assertEquals(brand, engine.getBrand());
+        assertEquals(fuelType, engine.getFuelType());
         assertEquals(engineName, engine.getName());
-        assertEquals(engineDisplacement, engine.getDisplacement());
-        assertEquals(engineHorsepower, engine.getHorsepower());
+        assertEquals(displacement, engine.getDisplacement());
+        assertEquals(horsepower, engine.getHorsepower());
     }
 
     @Test
@@ -84,7 +65,7 @@ class EngineServiceTest {
     @Test
     void createEngineShouldThrowWhenNameUsed() {
         final String exceptionMessage = MessageFormat.format("There is already an engine with the given name ({0})", engineName);
-        when(brandService.getById(any())).thenReturn(engineBrand);
+        when(brandService.getById(any())).thenReturn(brand);
         when(engineRepository.existsByName(engineName)).thenReturn(true);
 
         final Throwable thrown = assertThrows(RuntimeException.class, () -> engineService.createEngine(engineBindingModel));
@@ -129,12 +110,12 @@ class EngineServiceTest {
     @Test
     void getAllEnginesByBrandIdShouldReturnList() {
         final List<Engine> engines = List.of(engine);
-        when(brandService.getById(brandId)).thenReturn(engineBrand);
-        when(engineRepository.findAllByBrand(engineBrand)).thenReturn(engines);
+        when(brandService.getById(brandId)).thenReturn(brand);
+        when(engineRepository.findAllByBrand(brand)).thenReturn(engines);
 
         assertEquals(engines, engineService.getAllEnginesByBrandId(brandId));
         verify(brandService, times(1)).getById(brandId);
-        verify(engineRepository, times(1)).findAllByBrand(engineBrand);
+        verify(engineRepository, times(1)).findAllByBrand(brand);
     }
 
     @Test
@@ -145,6 +126,6 @@ class EngineServiceTest {
 
         assertEquals(exceptionMessage, thrown.getMessage());
         verify(brandService, times(1)).getById(brandId);
-        verify(engineRepository, times(0)).findAllByBrand(engineBrand);
+        verify(engineRepository, times(0)).findAllByBrand(brand);
     }
 }

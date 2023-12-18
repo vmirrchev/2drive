@@ -3,6 +3,7 @@ package softuni.exam.drive.util;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.Role;
 
@@ -16,16 +17,14 @@ import static org.mockito.Mockito.when;
  * @author Vasil Mirchev
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserUtilsTest {
+class UserUtilsTest extends BaseTest {
 
-    private User user = mock(User.class);
-    private User principal = mock(User.class);
+    private final User principal = mock(User.class);
     private final String principalUsername = "user";
-    private final String userUsername = "other user";
 
     @BeforeAll
     public void setUp() {
-        when(user.getUsername()).thenReturn(userUsername);
+        when(user.getUsername()).thenReturn(username);
         when(principal.getUsername()).thenReturn(principalUsername);
     }
 
@@ -43,7 +42,7 @@ class UserUtilsTest {
 
     @Test
     void verifyUserCanDeleteOfferThrows() {
-        final String message = MessageFormat.format("Offer created by user ({0}) cannot be deleted by user ({1}).", userUsername, principalUsername);
+        final String message = MessageFormat.format("Offer created by user ({0}) cannot be deleted by user ({1}).", username, principalUsername);
         when(principal.getRole()).thenReturn(Role.ROLE_USER);
 
         final Throwable thrown = assertThrows(RuntimeException.class, () -> UserUtils.verifyUserCanDeleteOffer(principal, user));
@@ -57,7 +56,7 @@ class UserUtilsTest {
 
     @Test
     void verifyUserCanEditProfileThrows() {
-        final String message = MessageFormat.format("Profile of user ({0}) cannot be updated by user ({1}).", userUsername, principalUsername);
+        final String message = MessageFormat.format("Profile of user ({0}) cannot be updated by user ({1}).", username, principalUsername);
 
         final Throwable thrown = assertThrows(RuntimeException.class, () -> UserUtils.verifyUserCanEditProfile(principal, user));
         assertEquals(message, thrown.getMessage());

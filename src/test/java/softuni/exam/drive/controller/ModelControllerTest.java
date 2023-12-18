@@ -1,30 +1,26 @@
 package softuni.exam.drive.controller;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import softuni.exam.drive.model.dto.ModelBindingModel;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.dto.ModelDTO;
 import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.model.entity.Model;
 import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.TransmissionType;
-import softuni.exam.drive.service.ModelService;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,35 +28,20 @@ import static org.mockito.Mockito.*;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(OutputCaptureExtension.class)
-class ModelControllerTest {
+class ModelControllerTest extends BaseTest {
 
-    private final ModelService modelService = mock(ModelService.class);
-    private final ModelMapper modelMapper = new ModelMapper();
     private final ModelController modelController = new ModelController(modelService, modelMapper);
-    private final ModelBindingModel modelBindingModel = mock(ModelBindingModel.class);
-    private final BindingResult bindingResult = mock(BindingResult.class);
-    private final RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
-    private final Model model = mock(Model.class);
-    private final Long modelId = 1L;
-    private final Long brandId = 1L;
-    private final String exceptionMessage = "message";
-    private final String redirectUrl = "redirect:/add-model";
 
     @BeforeAll
     public void setUp() {
         when(model.getId()).thenReturn(modelId);
-        when(model.getName()).thenReturn("3 series");
-        when(model.getStartYear()).thenReturn(1998);
-        when(model.getEndYear()).thenReturn(2004);
+        when(model.getName()).thenReturn(modelName);
+        when(model.getStartYear()).thenReturn(startYear);
+        when(model.getEndYear()).thenReturn(endYear);
         when(model.getBodyTypes()).thenReturn(List.of(BodyType.SEDAN, BodyType.COUPE, BodyType.WAGON, BodyType.CONVERTIBLE));
         when(model.getDriveTypes()).thenReturn(List.of(DriveType.RWD, DriveType.AWD));
         when(model.getTransmissionTypes()).thenReturn(List.of(TransmissionType.MANUAL, TransmissionType.AUTOMATIC));
         when(model.getEngines()).thenReturn(Set.of(mock(Engine.class)));
-    }
-
-    @AfterEach
-    public void clean() {
-        reset(modelService, redirectAttributes);
     }
 
     @Test
@@ -72,7 +53,7 @@ class ModelControllerTest {
         verify(modelService, times(1)).createModel(modelBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", true);
         assertEquals("", capturedOutput.getOut());
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddModelUrl, result);
     }
 
     @Test
@@ -83,24 +64,23 @@ class ModelControllerTest {
 
         verify(modelService, times(0)).createModel(modelBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("org.springframework.validation.BindingResult.modelBindingModel", bindingResult);
-        verify(redirectAttributes, times(1)).addFlashAttribute("modelBindingModel", modelBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute(modelBindingModelAttribute, modelBindingModel);
         assertEquals("", capturedOutput.getOut());
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddModelUrl, result);
     }
 
     @Test
     void createModelShouldHandleExceptions(CapturedOutput capturedOutput) {
-        final String exceptionMessage = "message";
         when(bindingResult.hasErrors()).thenReturn(false);
         doThrow(new RuntimeException(exceptionMessage)).when(modelService).createModel(modelBindingModel);
 
         final String result = modelController.createModel(modelBindingModel, bindingResult, redirectAttributes);
 
         verify(modelService, times(1)).createModel(modelBindingModel);
-        verify(redirectAttributes, times(1)).addFlashAttribute("modelBindingModel", modelBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute(modelBindingModelAttribute, modelBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", false);
         assertThat(capturedOutput.getOut()).contains(MessageFormat.format("Model creation operation failed. {0}", exceptionMessage));
-        assertEquals(redirectUrl, result);
+        assertEquals(redirectAddModelUrl, result);
     }
 
     @Test

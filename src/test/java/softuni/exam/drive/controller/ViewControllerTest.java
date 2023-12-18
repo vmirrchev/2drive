@@ -1,21 +1,16 @@
 package softuni.exam.drive.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.dto.*;
 import softuni.exam.drive.model.entity.Offer;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.*;
-import softuni.exam.drive.service.BrandService;
-import softuni.exam.drive.service.OfferService;
-import softuni.exam.drive.service.UserService;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -28,54 +23,11 @@ import static org.mockito.Mockito.*;
  * @author Vasil Mirchev
  */
 @ExtendWith(OutputCaptureExtension.class)
-class ViewControllerTest {
+class ViewControllerTest extends BaseTest {
 
-    private final BrandService brandService = mock(BrandService.class);
-    private final OfferService offerService = mock(OfferService.class);
-    private final UserService userService = mock(UserService.class);
     private final ViewController viewController = new ViewController(brandService, offerService, userService);
-    private final HttpServletRequest http = mock(HttpServletRequest.class);
-    private final Authentication authentication = mock(Authentication.class);
-    private final Offer offer = mock(Offer.class);
     private final Model model = mock(Model.class);
-    private final BodyType bodyType = mock(BodyType.class);
-    final User user = mock(User.class);
-    final User dbUser = mock(User.class);
-    private final String engineBindingModelAttribute = "engineBindingModel";
-    private final String modelBindingModelAttribute = "modelBindingModel";
-    private final String registerBindingModelAttribute = "registerBindingModel";
-    private final String offerBindingModelAttribute = "offerBindingModel";
-    private final String userBindingModelAttribute = "userBindingModel";
-    private final String roleBindingModelAttribute = "roleBindingModel";
-    private final String brandsAttribute = "brands";
-    private final String offersAttribute = "offers";
-    private final String offerAttribute = "offer";
-    private final String fuelTypesAttribute = "fuelTypes";
-    private final String bodyTypesAttribute = "bodyTypes";
-    private final String driveTypesAttribute = "driveTypes";
-    private final String transmissionTypesAttribute = "transmissionTypes";
-    private final String userIdAttribute = "userId";
-    private final String userAttribute = "user";
-    private final String rolesAttribute = "roles";
-    private final Long offerId = 1L;
-    private final Long userId = 1L;
-    private final String addEnginePath = "add-engine";
-    private final String addModelPath = "add-model";
-    private final String registerPath = "register";
-    private final String addOfferPath = "add-offer";
-    private final String profilePath = "profile";
-    private final String loginPath = "login";
-    private final String offersPath = "offers";
-    private final String offerPath = "offer";
-    private final String redirectIndexPath = "redirect:/";
-    private final String redirectLoginPath = "redirect:/login";
-    private final String editProfilePath = "edit-profile";
-    private final String editRolePath = "edit-role";
-
-    @AfterEach
-    public void clean() {
-        reset(brandService, offerService, http, authentication);
-    }
+    private final User dbUser = mock(User.class);
 
     @Test
     void getIndex() {
@@ -93,7 +45,7 @@ class ViewControllerTest {
     void getRegisterShouldRedirectWhenAuthenticated() {
         when(authentication.isAuthenticated()).thenReturn(true);
 
-        assertEquals(redirectIndexPath, viewController.getRegister(model, authentication));
+        assertEquals(redirectPath, viewController.getRegister(model, authentication));
     }
 
     @Test
@@ -127,7 +79,7 @@ class ViewControllerTest {
     @Test
     void getLoginShouldRedirectWhenAuthenticated() {
         when(authentication.isAuthenticated()).thenReturn(true);
-        assertEquals(redirectIndexPath, viewController.getLogin(model, authentication));
+        assertEquals(redirectPath, viewController.getLogin(model, authentication));
     }
 
     @Test
@@ -149,7 +101,7 @@ class ViewControllerTest {
 
     @Test
     void getProfileShouldRedirectWhenAuthenticationNull() {
-        assertEquals(redirectLoginPath, viewController.getProfile(model, null));
+        assertEquals(redirectLoginUrl, viewController.getProfile(model, null));
     }
 
     @Test
@@ -172,17 +124,12 @@ class ViewControllerTest {
 
     @Test
     void getEditProfileShouldRedirectWhenAuthenticationNull() {
-        assertEquals(redirectLoginPath, viewController.getEditProfile(model, null));
+        assertEquals(redirectLoginUrl, viewController.getEditProfile(model, null));
     }
 
     @Test
     void getEditProfileShouldUseNewUserBindingModel() {
         ArgumentCaptor<UserBindingModel> argumentCaptor = ArgumentCaptor.forClass(UserBindingModel.class);
-        final String username = "john_doe";
-        final String firstName = "John";
-        final String lastName = "Doe";
-        final String email = "john_doe87@yahoo.com";
-        final String phoneNumber = "0888908070";
         when(authentication.getPrincipal()).thenReturn(user);
         when(user.getId()).thenReturn(userId);
         when(userService.getUserById(userId)).thenReturn(dbUser);
@@ -278,7 +225,6 @@ class ViewControllerTest {
 
     @Test
     void getOfferShouldHandleExceptionsWhenOfferIdInvalid(CapturedOutput capturedOutput) {
-        final String exceptionMessage = "message";
         ArgumentCaptor<Offer> argumentCaptor = ArgumentCaptor.forClass(Offer.class);
         doThrow(new RuntimeException(exceptionMessage)).when(offerService).getOfferById(offerId);
 
@@ -293,7 +239,7 @@ class ViewControllerTest {
 
     @Test
     void getAddOfferShouldRedirectWhenAuthenticationNull() {
-        assertEquals(redirectLoginPath, viewController.getAddOffer(model, null));
+        assertEquals(redirectLoginUrl, viewController.getAddOffer(model, null));
     }
 
     @Test
@@ -336,7 +282,7 @@ class ViewControllerTest {
     @Test
     void getAddEngineShouldRedirectWhenUserNotAdmin() {
         when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
-        assertEquals(redirectIndexPath, viewController.getAddEngine(model, http));
+        assertEquals(redirectPath, viewController.getAddEngine(model, http));
     }
 
     @Test
@@ -380,7 +326,7 @@ class ViewControllerTest {
 
     @Test
     void getMyOffersShouldRedirectWhenAuthenticationNull() {
-        assertEquals(redirectLoginPath, viewController.getMyOffers(model, null));
+        assertEquals(redirectLoginUrl, viewController.getMyOffers(model, null));
         verify(authentication, times(0)).getPrincipal();
     }
 
@@ -393,7 +339,7 @@ class ViewControllerTest {
     @Test
     void getAddModelShouldRedirectWhenUserNotAdmin() {
         when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
-        assertEquals(redirectIndexPath, viewController.getAddModel(model, http));
+        assertEquals(redirectPath, viewController.getAddModel(model, http));
     }
 
     @Test
@@ -457,21 +403,21 @@ class ViewControllerTest {
     @Test
     void getUserRolesShouldRedirectWhenUserNotAdmin() {
         when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
-        assertEquals(redirectIndexPath, viewController.getUserRoles(model, http));
+        assertEquals(redirectPath, viewController.getUserRoles(model, http));
     }
 
     @Test
     void getUserRolesShouldReturnRoles() {
         when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(true);
 
-        assertEquals("roles", viewController.getUserRoles(model, http));
+        assertEquals(rolesPath, viewController.getUserRoles(model, http));
         verify(model, times(1)).addAttribute("users", userService.getAllUsers());
     }
 
     @Test
     void getEditUserRolesShouldRedirectWhenUserNotAdmin() {
         when(http.isUserInRole(Role.ROLE_ADMIN.name())).thenReturn(false);
-        assertEquals(redirectIndexPath, viewController.getEditUserRoles(userId, model, http));
+        assertEquals(redirectPath, viewController.getEditUserRoles(userId, model, http));
     }
 
     @Test

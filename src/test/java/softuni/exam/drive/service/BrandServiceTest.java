@@ -1,33 +1,25 @@
 package softuni.exam.drive.service;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.entity.Brand;
-import softuni.exam.drive.repository.BrandRepository;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Vasil Mirchev
  */
-class BrandServiceTest {
+class BrandServiceTest extends BaseTest {
 
-    private final BrandRepository brandRepository = mock(BrandRepository.class);
     private final BrandService brandService = new BrandService(brandRepository);
-    private final Brand brand = mock(Brand.class);
-    private final Long brandId = 1L;
-
-    @AfterEach
-    public void clean() {
-        reset(brandRepository);
-    }
 
     @Test
     void getByIdShouldReturnBrand() {

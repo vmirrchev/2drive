@@ -1,15 +1,11 @@
 package softuni.exam.drive.service;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.entity.Brand;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.Role;
-import softuni.exam.drive.repository.BrandRepository;
-import softuni.exam.drive.repository.UserRepository;
 
 import java.util.List;
 
@@ -20,18 +16,10 @@ import static org.mockito.Mockito.*;
 /**
  * @author Vasil Mirchev
  */
-class InitServiceTest {
+class InitServiceTest extends BaseTest {
 
-    private final BrandRepository brandRepository = mock(BrandRepository.class);
-    private final UserRepository userRepository = mock(UserRepository.class);
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final InitService initService = new InitService(brandRepository, userRepository, passwordEncoder);
     private final String username = "admin";
-
-    @AfterEach
-    public void clean() {
-        reset(brandRepository);
-    }
 
     @Test
     void runShouldCreateBrands() {

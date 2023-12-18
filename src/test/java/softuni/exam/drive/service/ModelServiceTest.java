@@ -1,55 +1,37 @@
 package softuni.exam.drive.service;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import softuni.exam.drive.model.dto.ModelBindingModel;
-import softuni.exam.drive.model.entity.Brand;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.entity.Engine;
 import softuni.exam.drive.model.entity.Model;
 import softuni.exam.drive.model.enums.BodyType;
 import softuni.exam.drive.model.enums.DriveType;
 import softuni.exam.drive.model.enums.TransmissionType;
-import softuni.exam.drive.repository.ModelRepository;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 /**
  * @author Vasil Mirchev
  */
-class ModelServiceTest {
+class ModelServiceTest extends BaseTest {
 
-    private final ModelRepository modelRepository = mock(ModelRepository.class);
-    private final BrandService brandService = mock(BrandService.class);
-    private final EngineService engineService = mock(EngineService.class);
     private final ModelService modelService = new ModelService(modelRepository, brandService, engineService);
-    private final ModelBindingModel modelBindingModel = mock(ModelBindingModel.class);
-    private final Brand modelBrand = mock(Brand.class);
-    private final String modelName = "3 Series";
-    private final Long brandId = 1L;
-    private final Long firstEngineId = 1L;
-    private final Long secondEngineId = 2L;
-    private final List<Long> engineIds = List.of(firstEngineId, secondEngineId);
+
+    private final List<Long> engineIds = List.of(engineId);
     private final List<BodyType> bodyTypes = List.of(BodyType.SEDAN, BodyType.COUPE, BodyType.CONVERTIBLE, BodyType.WAGON);
     private final List<DriveType> driveTypes = List.of(DriveType.RWD, DriveType.AWD);
     private final List<TransmissionType> transmissionTypes = List.of(TransmissionType.MANUAL, TransmissionType.AUTOMATIC);
-    private final Engine firstEngine = mock(Engine.class);
-    private final Engine secondEngine = mock(Engine.class);
-    private final Set<Engine> engines = Set.of(firstEngine, secondEngine);
-    private final int startYear = 2004;
-    private final int endYear = 2010;
-    private final Model model = mock(Model.class);
-    private final String exceptionMessage = "message";
-    private final Long modelId = 1L;
+    private final Set<Engine> engines = Set.of(engine);
 
     @BeforeEach
     public void setUp() {
@@ -63,24 +45,17 @@ class ModelServiceTest {
         when(modelBindingModel.getEndYear()).thenReturn(endYear);
     }
 
-    @AfterEach
-    public void clean() {
-        reset(modelRepository, brandService, engineService);
-    }
-
     @Test
     void createModelShouldAddNewModel() {
         final ArgumentCaptor<Model> argumentCaptor = ArgumentCaptor.forClass(Model.class);
-        when(brandService.getById(any())).thenReturn(modelBrand);
-        when(engineService.getEngineById(firstEngineId)).thenReturn(firstEngine);
-        when(engineService.getEngineById(secondEngineId)).thenReturn(secondEngine);
+        when(brandService.getById(any())).thenReturn(brand);
+        when(engineService.getEngineById(engineId)).thenReturn(engine);
 
         modelService.createModel(modelBindingModel);
 
         verify(modelRepository, times(1)).existsByName(modelName);
         verify(brandService, times(1)).getById(brandId);
-        verify(engineService, times(1)).getEngineById(firstEngineId);
-        verify(engineService, times(1)).getEngineById(secondEngineId);
+        verify(engineService, times(1)).getEngineById(engineId);
         verify(modelRepository).save(argumentCaptor.capture());
         final Model model = argumentCaptor.getValue();
         assertEquals(modelName, model.getName());
@@ -89,7 +64,7 @@ class ModelServiceTest {
         assertEquals(bodyTypes, model.getBodyTypes());
         assertEquals(driveTypes, model.getDriveTypes());
         assertEquals(transmissionTypes, model.getTransmissionTypes());
-        assertEquals(modelBrand, model.getBrand());
+        assertEquals(brand, model.getBrand());
         assertEquals(engines, model.getEngines());
     }
 
@@ -125,7 +100,7 @@ class ModelServiceTest {
 
     @Test
     void createModelShouldThrowWhenEngineIdInvalid() {
-        doThrow(new RuntimeException(exceptionMessage)).when(engineService).getEngineById(firstEngineId);
+        doThrow(new RuntimeException(exceptionMessage)).when(engineService).getEngineById(engineId);
 
         final Throwable thrown = assertThrows(RuntimeException.class, () -> modelService.createModel(modelBindingModel));
 
@@ -133,7 +108,7 @@ class ModelServiceTest {
         verify(modelBindingModel, times(1)).getName();
         verify(modelRepository, times(1)).existsByName(modelName);
         verify(brandService, times(1)).getById(brandId);
-        verify(engineService, times(1)).getEngineById(firstEngineId);
+        verify(engineService, times(1)).getEngineById(engineId);
         verify(modelRepository, times(0)).save(any());
     }
 
@@ -168,14 +143,14 @@ class ModelServiceTest {
     @Test
     void getAllModelsByBrandIdShouldReturnModels() {
         final List<Model> models = List.of(model);
-        when(brandService.getById(brandId)).thenReturn(modelBrand);
-        when(modelRepository.findAllByBrand(modelBrand)).thenReturn(models);
+        when(brandService.getById(brandId)).thenReturn(brand);
+        when(modelRepository.findAllByBrand(brand)).thenReturn(models);
 
         final List<Model> result = modelService.getAllModelsByBrandId(brandId);
 
         assertEquals(models, result);
         verify(brandService, times(1)).getById(brandId);
-        verify(modelRepository, times(1)).findAllByBrand(modelBrand);
+        verify(modelRepository, times(1)).findAllByBrand(brand);
     }
 
     @Test

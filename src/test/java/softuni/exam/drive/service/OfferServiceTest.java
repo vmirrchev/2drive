@@ -1,19 +1,10 @@
 package softuni.exam.drive.service;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.web.multipart.MultipartFile;
-import softuni.exam.drive.model.dto.OfferBindingModel;
-import softuni.exam.drive.model.entity.Engine;
-import softuni.exam.drive.model.entity.Model;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.entity.Offer;
-import softuni.exam.drive.model.entity.User;
-import softuni.exam.drive.model.enums.BodyType;
-import softuni.exam.drive.model.enums.DriveType;
-import softuni.exam.drive.model.enums.TransmissionType;
-import softuni.exam.drive.repository.OfferRepository;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -26,32 +17,10 @@ import static org.mockito.Mockito.*;
 /**
  * @author Vasil Mirchev
  */
-class OfferServiceTest {
+class OfferServiceTest extends BaseTest {
 
-    private final ModelService modelService = mock(ModelService.class);
-    private final EngineService engineService = mock(EngineService.class);
-    private final OfferRepository offerRepository = mock(OfferRepository.class);
     private final OfferService offerService = new OfferService(modelService, engineService, offerRepository);
-    private final OfferBindingModel offerBindingModel = mock(OfferBindingModel.class);
-    private final User user = mock(User.class);
-    private final Offer offer = mock(Offer.class);
-    private final Model model = mock(Model.class);
-    private final Engine engine = mock(Engine.class);
-    private final MultipartFile picture = mock(MultipartFile.class);
-    private final Long offerId = 1L;
-    private final Long modelId = 1L;
-    private final Long engineId = 1L;
-    private final BodyType bodyType = BodyType.SEDAN;
-    private final DriveType driveType = DriveType.RWD;
-    private final TransmissionType transmissionType = TransmissionType.MANUAL;
-    private final int price = 10_000;
-    private final int odometer = 265_500;
-    private final int year = 2007;
-    private final String color = "blue";
-    private final String description = "Car is in perfect condition. No damage, has new tires and 17' alloy wheels";
-    private final boolean hasServiceBook = true;
-    private final boolean hasAccidentDamage = false;
-    private final String exceptionMessage = "message";
+
     private final List<Offer> offers = List.of(offer);
 
     @BeforeEach
@@ -69,11 +38,6 @@ class OfferServiceTest {
         when(offerBindingModel.getDescription()).thenReturn(description);
         when(offerBindingModel.isHasServiceBook()).thenReturn(hasServiceBook);
         when(offerBindingModel.isHasAccidentDamage()).thenReturn(hasAccidentDamage);
-    }
-
-    @AfterEach
-    public void clean() {
-        reset(modelService, engineService, offerRepository);
     }
 
     @Test

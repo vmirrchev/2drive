@@ -4,14 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import softuni.exam.drive.model.dto.OfferBindingModel;
-import softuni.exam.drive.model.entity.Offer;
+import softuni.exam.drive.BaseTest;
 import softuni.exam.drive.model.entity.User;
 import softuni.exam.drive.model.enums.Role;
-import softuni.exam.drive.service.OfferService;
 
 import java.text.MessageFormat;
 
@@ -23,20 +18,10 @@ import static org.mockito.Mockito.*;
  * @author Vasil Mirchev
  */
 @ExtendWith(OutputCaptureExtension.class)
-class OfferControllerTest {
+class OfferControllerTest extends BaseTest {
 
-    private final OfferService offerService = mock(OfferService.class);
     private final OfferController offerController = new OfferController(offerService);
-    private final OfferBindingModel offerBindingModel = mock(OfferBindingModel.class);
-    private final Authentication authentication = mock(Authentication.class);
-    private final BindingResult bindingResult = mock(BindingResult.class);
-    private final RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
     private final User principal = mock(User.class);
-    private final User user = mock(User.class);
-    private final Offer offer = mock(Offer.class);
-    private final Long offerId = 1L;
-    private final String redirectAddOfferUrl = "redirect:/add-offer";
-    private final String redirectOffersUrl = "redirect:/offers";
 
     @Test
     void createOfferShouldAddNewOffer(CapturedOutput capturedOutput) {
@@ -60,7 +45,7 @@ class OfferControllerTest {
 
         verify(offerService, times(0)).createOffer(offerBindingModel, user);
         verify(redirectAttributes, times(1)).addFlashAttribute("org.springframework.validation.BindingResult.offerBindingModel", bindingResult);
-        verify(redirectAttributes, times(1)).addFlashAttribute("offerBindingModel", offerBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute(offerBindingModelAttribute, offerBindingModel);
         assertEquals("", capturedOutput.getOut());
         assertEquals(redirectAddOfferUrl, result);
     }
@@ -75,7 +60,7 @@ class OfferControllerTest {
         final String result = offerController.createOffer(authentication, offerBindingModel, bindingResult, redirectAttributes);
 
         verify(offerService, times(1)).createOffer(offerBindingModel, user);
-        verify(redirectAttributes, times(1)).addFlashAttribute("offerBindingModel", offerBindingModel);
+        verify(redirectAttributes, times(1)).addFlashAttribute(offerBindingModelAttribute, offerBindingModel);
         verify(redirectAttributes, times(1)).addFlashAttribute("addSuccess", false);
         assertThat(capturedOutput.getOut()).contains(MessageFormat.format("Offer creation operation failed. {0}", exceptionMessage));
         assertEquals(redirectAddOfferUrl, result);
