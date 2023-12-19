@@ -1,33 +1,64 @@
-function fetchModels() {
-    let selectedElement = document.getElementsByName("brandId")[0];
-    let targetElement = document.getElementsByName("modelId")[0];
+let brandElement = document.getElementsByName("brandId")[0];
+let modelElement = document.getElementsByName("modelId")[0];
+let enginesElement = document.getElementsByName("engineId")[0];
+let bodiesElement = document.getElementsByName("bodyType")[0];
+let drivesElement = document.getElementsByName("driveType")[0];
+let transmissionsElement = document.getElementsByName("transmissionType")[0];
 
-    fetch('/api/v1/models/filter?brandId=' + selectedElement.value)
+document.addEventListener("DOMContentLoaded", function(event) {
+    enableDisable(brandElement, modelElement)
+    enableDisable(modelElement, enginesElement)
+    enableDisable(modelElement, bodiesElement)
+    enableDisable(modelElement, drivesElement)
+    enableDisable(modelElement, transmissionsElement)
+})
+
+
+function fetchModels() {
+    // Empty innerHTML for all fields except brand
+    modelElement.innerHTML = '<option value="" disabled="" selected="">Select car model</option>'
+    enginesElement.innerHTML = '<option value="" disabled="" selected="">Select car engine</option>'
+    bodiesElement.innerHTML = '<option value="" disabled="" selected="">Select body type</option>'
+    drivesElement.innerHTML = '<option value="" disabled="" selected="">Select drive type</option>'
+    transmissionsElement.innerHTML = '<option value="" disabled="" selected="">Select transmission type</option>'
+
+    // Unlock model field, other fields should remain locked
+    enableDisable(brandElement, modelElement)
+    enableDisable(modelElement, enginesElement)
+    enableDisable(modelElement, bodiesElement)
+    enableDisable(modelElement, drivesElement)
+    enableDisable(modelElement, transmissionsElement)
+
+    fetch('/api/v1/models/filter?brandId=' + brandElement.value)
         .then(response => response.json())
         .then(models => {
-            targetElement.innerHTML = '<option value="" disabled="" selected="">Select car model</option>'
             for (const model of models) {
                 let selectOption = document.createElement("option")
                 selectOption.value = model.id
                 // 3 Series (2004 - 2010)
                 let text = document.createTextNode(`${model.name} (${model.startYear} - ${model.endYear})`)
                 selectOption.appendChild(text)
-                targetElement.append(selectOption)
+                modelElement.append(selectOption)
             }
         })
 }
 
 function fetchModel() {
-    let selectedElement = document.getElementsByName("modelId")[0];
-    let enginesElement = document.getElementsByName("engineId")[0];
-    let bodiesElement = document.getElementsByName("bodyType")[0];
-    let drivesElement = document.getElementsByName("driveType")[0];
-    let transmissionsElement = document.getElementsByName("transmissionType")[0];
+    // Empty innerHTML for all fields except brand and model
+    enginesElement.innerHTML = '<option value="" disabled="" selected="">Select car engine</option>'
+    bodiesElement.innerHTML = '<option value="" disabled="" selected="">Select body type</option>'
+    drivesElement.innerHTML = '<option value="" disabled="" selected="">Select drive type</option>'
+    transmissionsElement.innerHTML = '<option value="" disabled="" selected="">Select transmission type</option>'
 
-    fetch('/api/v1/models/' + selectedElement.value)
+    // Unlock all fields
+    enableDisable(modelElement, enginesElement)
+    enableDisable(modelElement, bodiesElement)
+    enableDisable(modelElement, drivesElement)
+    enableDisable(modelElement, transmissionsElement)
+
+    fetch('/api/v1/models/' + modelElement.value)
         .then(response => response.json())
         .then(model => {
-            enginesElement.innerHTML = '<option value="" disabled="" selected="">Select car engine</option>'
             for (const engine of model.engines) {
                 let selectOption = document.createElement("option")
                 selectOption.value = engine.id
@@ -37,7 +68,6 @@ function fetchModel() {
                 enginesElement.append(selectOption)
             }
 
-            bodiesElement.innerHTML = '<option value="" disabled="" selected="">Select body type</option>'
             for (const bodyType of model.bodyTypes) {
                 let selectOption = document.createElement("option")
                 selectOption.value = bodyType
@@ -47,7 +77,6 @@ function fetchModel() {
                 bodiesElement.append(selectOption)
             }
 
-            drivesElement.innerHTML = '<option value="" disabled="" selected="">Select drive type</option>'
             for (const driveType of model.driveTypes) {
                 let selectOption = document.createElement("option")
                 selectOption.value = driveType
@@ -57,14 +86,21 @@ function fetchModel() {
                 drivesElement.append(selectOption)
             }
 
-            transmissionsElement.innerHTML = '<option value="" disabled="" selected="">Select transmission type</option>'
             for (const transmissionType of model.transmissionTypes) {
                 let selectOption = document.createElement("option")
                 selectOption.value = transmissionType
-                // AWD
+                // MANUAL
                 let text = document.createTextNode(`${transmissionType}`)
                 selectOption.appendChild(text)
                 transmissionsElement.append(selectOption)
             }
         })
+}
+
+function enableDisable(firstElement, secondElement) {
+    if (firstElement.value == "") {
+        secondElement.setAttribute('disabled','disabled');
+    } else {
+        secondElement.removeAttribute('disabled');
+    }
 }
