@@ -1,9 +1,32 @@
-#add-offer .add-offer-container {
-    text-align: center;
-    padding: 2em;
-    max-width: 800px;
-    border-radius: 10px;
+textarea {
+    resize: vertical;
+}
+
+#add-offer form {
+    display: flex;
+    flex-direction: column;
     margin: 0 auto;
+    max-width: 1000px;
+}
+
+#add-offer form .details-container {
+    display: flex;
+}
+
+#add-offer form .details-container .model-details,
+#add-offer form .details-container .car-details {
+    flex: 50%;
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+}
+
+#add-offer form .details-container .model-details {
+    background: var(--lighter-color);
+}
+
+#add-offer form .details-container .car-details {
+    background: var(--light-color);
 }
 
 #picture {
@@ -21,6 +44,12 @@
 .picture-container {
     display: flex;
     flex-direction: column;
+}
+
+@media only screen and (max-width: 800px) {
+    #add-offer form .details-container {
+        flex-direction: column;
+    }
 }
 
 @media only screen and (max-width: 300px) {

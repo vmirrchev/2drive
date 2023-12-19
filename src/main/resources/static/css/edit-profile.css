@@ -5,7 +5,7 @@
 }
 
 #profile .profile-container .detail p,
-#profile .profile-container .detail div{
+#profile .profile-container .detail input {
     flex: 50%;
 }
 
