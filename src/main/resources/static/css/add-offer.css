@@ -29,10 +29,6 @@ textarea {
     background: var(--light-color);
 }
 
-#picture {
-    color: transparent;
-}
-
 .features-container,
 .picture-container {
     margin-bottom: 10px;
