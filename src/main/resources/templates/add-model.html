@@ -44,11 +44,11 @@
                         <option th:each="transmissionType:${transmissionTypes}" th:value="${transmissionType}" th:text="${transmissionType}"></option>
                     </select>
                     <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
-                    <input type="text" name="name" placeholder="Name">
+                    <input type="text" name="name" placeholder="Name" th:value="${modelBindingModel.name}">
                     <p class="text-danger" th:if="${#fields.hasErrors('startYear')}" th:errors="*{startYear}"></p>
-                    <input type="number" name="startYear" placeholder="Start year">
+                    <input type="number" name="startYear" placeholder="Start year" th:value="${modelBindingModel.startYear}">
                     <p class="text-danger" th:if="${#fields.hasErrors('endYear')}" th:errors="*{endYear}"></p>
-                    <input type="number" name="endYear" placeholder="End year">
+                    <input type="number" name="endYear" placeholder="End year" th:value="${modelBindingModel.endYear}">
                     <button type="submit">Add model</button>
                 </form>
             </div>

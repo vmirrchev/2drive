@@ -49,15 +49,15 @@
                         <div class="car-details">
                             <h2>Car details</h2>
                             <p class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
-                            <input type="text" name="title" placeholder="Title">
+                            <input type="text" name="title" placeholder="Title" th:value="${offerBindingModel.title}">
                             <p class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></p>
-                            <input type="number" name="price" placeholder="Price">
+                            <input type="number" name="price" placeholder="Price" th:value="${offerBindingModel.price}">
                             <p class="text-danger" th:if="${#fields.hasErrors('odometer')}" th:errors="*{odometer}"></p>
-                            <input type="number" name="odometer" placeholder="Odometer">
+                            <input type="number" name="odometer" placeholder="Odometer" th:value="${offerBindingModel.odometer}">
                             <p class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></p>
-                            <input type="number" name="year" placeholder="Year">
+                            <input type="number" name="year" placeholder="Year" th:value="${offerBindingModel.year}">
                             <p class="text-danger" th:if="${#fields.hasErrors('color')}" th:errors="*{color}"></p>
-                            <input type="text" name="color" placeholder="Color">
+                            <input type="text" name="color" placeholder="Color" th:value="${offerBindingModel.color}">
                             <p class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
                             <textarea name="description" placeholder="Description"></textarea>
                             <div class="features-container">
@@ -73,7 +73,7 @@
                             <p class="text-danger" th:if="${#fields.hasErrors('picture')}" th:errors="*{picture}"></p>
                             <div class="picture-container">
                                 <label for="picture">Picture</label>
-                                <input type="file" id="picture" name="picture" accept="jpg, png" />
+                                <input type="file" id="picture" name="picture" accept="jpg, png" th:value="${offerBindingModel.picture}"/>
                             </div>
                             <button type="submit">Add offer</button>
                         </div>

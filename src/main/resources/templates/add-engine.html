@@ -15,20 +15,20 @@
                         <p class="text-danger" th:if="${addSuccess == false}">Engine could not be added. Please try again or contact administrator</p>
                         <p class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandId}"></p>
                         <select name="brandId">
-                            <option value="" disabled selected>Select manufacturer</option>
-                            <option th:each="brand:${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                            <option value="" th:selected="${engineBindingModel.brandId == null}" disabled>Select manufacturer</option>
+                            <option th:each="brand:${brands}" th:value="${brand.id}" th:selected="${brand.id == engineBindingModel.brandId}" th:text="${brand.name}"></option>
                         </select>
                         <p class="text-danger" th:if="${#fields.hasErrors('fuelType')}" th:errors="*{fuelType}"></p>
                         <select name="fuelType">
-                            <option value="" disabled selected>Select fuel type</option>
-                            <option th:each="fuelType: ${fuelTypes}" th:value="${fuelType}" th:text="${fuelType}"></option>
+                            <option value="" th:selected="${engineBindingModel.fuelType == null}" disabled>Select fuel type</option>
+                            <option th:each="fuelType: ${fuelTypes}" th:value="${fuelType}" th:selected="${fuelType == engineBindingModel.fuelType}" th:text="${fuelType}"></option>
                         </select>
                         <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
-                        <input type="text" name="name" placeholder="Name">
+                        <input type="text" name="name" placeholder="Name" th:value="${engineBindingModel.name}">
                         <p class="text-danger" th:if="${#fields.hasErrors('horsepower')}" th:errors="*{horsepower}"></p>
-                        <input type="number" name="horsepower" placeholder="Horsepower">
+                        <input type="number" name="horsepower" placeholder="Horsepower" th:value="${engineBindingModel.horsepower}">
                         <p class="text-danger" th:if="${#fields.hasErrors('displacement')}" th:errors="*{displacement}"></p>
-                        <input type="number" name="displacement" placeholder="Displacement">
+                        <input type="number" name="displacement" placeholder="Displacement" th:value="${engineBindingModel.displacement}">
                         <button type="submit">Add engine</button>
                     </form>
                 </div>
